@@ -31,7 +31,7 @@ const PROJECTS: Project[] = [
     featured: true,
   },
   {
-    title: 'StrataReport AI',
+    title: 'StayRecap',
     category: 'AI SaaS · Autonomous Build Pipeline',
     description:
       'A multi-tenant SaaS that turns messy short-term-rental data (PMS exports, expense CSVs, guest reviews) into polished, owner-ready quarterly PDF reports in under two minutes — with AI narrative bound to verified numbers so it never hallucinates a figure. The distinctive part: the product is built and operated by an autonomous multi-agent CI/CD pipeline — an orchestrator reads the spec, then dispatches AI agents to write, review, test, and deploy code across four repos, and self-heals production incidents.',

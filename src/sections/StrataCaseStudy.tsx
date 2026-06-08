@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Box, Container, Typography, Chip, Button, Stack, IconButton, Divider } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import CloseIcon from '@mui/icons-material/Close';
@@ -46,7 +47,7 @@ const REPOS: { label: string; url: string }[] = [
   { label: 'Data model', url: 'https://github.com/strata-reports-ai/dbproj-strata-reports' },
 ];
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <Typography variant="overline" sx={{ color: ACCENT, letterSpacing: '0.18em', fontWeight: 600, display: 'block', mb: 1.5 }}>
       {children}
@@ -92,7 +93,7 @@ export default function StrataCaseStudy({ open, onClose }: { open: boolean; onCl
                 Case Study · AI SaaS · Autonomous Build Pipeline
               </Typography>
               <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3rem' }, mt: 1, mb: 2 }}>
-                StrataReport&nbsp;AI
+                StayRecap
               </Typography>
               <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, lineHeight: 1.7, mb: 5 }}>
                 A multi-tenant SaaS that turns messy short-term-rental data into polished, owner-ready quarterly PDF
@@ -104,7 +105,7 @@ export default function StrataCaseStudy({ open, onClose }: { open: boolean; onCl
               <SectionLabel>The product</SectionLabel>
               <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
                 Short-term-rental property managers spend 10–20 hours a quarter assembling owner reports by hand, pulling
-                from disconnected systems — the PMS, channel reviews, accounting, and ops tools. StrataReport ingests those
+                from disconnected systems — the PMS, channel reviews, accounting, and ops tools. StayRecap ingests those
                 CSV exports and produces a 4–8 page owner-facing report: headline metrics, charts, and an AI-written
                 narrative that explains the quarter and justifies the management fee — in about two minutes.
               </Typography>

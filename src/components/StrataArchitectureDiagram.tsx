@@ -24,7 +24,7 @@ const NODES: N[] = [
   { id: 'ai', x: 404, y: 392, title: 'App Insights', sub: 'traces · metrics' },
 ];
 
-const byId = Object.fromEntries(NODES.map((n) => [n.id, n])) as Record<string, N>;
+const byId = Object.fromEntries(NODES.map((n) => [n.id, n] as [string, N])) as Record<string, N>;
 const cx = (n: N) => n.x + W / 2;
 const cy = (n: N) => n.y + H / 2;
 
@@ -49,7 +49,7 @@ export default function StrataArchitectureDiagram() {
   return (
     <Box sx={{ width: '100%', overflowX: 'auto' }}>
       <Box sx={{ minWidth: 680 }}>
-        <svg viewBox="0 0 880 470" width="100%" role="img" aria-label="StrataReport AI runtime architecture">
+        <svg viewBox="0 0 880 470" width="100%" role="img" aria-label="StayRecap runtime architecture">
           {/* edges first so nodes sit on top */}
           <HEdge from={byId.user} to={byId.web} />
           <HEdge from={byId.web} to={api} />
