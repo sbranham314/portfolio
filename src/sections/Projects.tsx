@@ -105,7 +105,7 @@ export default function Projects() {
                 >
                   {/* Header */}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Box>
+                    <Box sx={{ minWidth: 0, mr: 1 }}>
                       <Typography
                         variant="caption"
                         sx={{ color: 'primary.main', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}

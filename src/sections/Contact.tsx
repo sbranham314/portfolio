@@ -82,6 +82,7 @@ export default function Contact() {
 
           {/* Primary CTA */}
           <Button
+            component="a"
             variant="contained"
             size="large"
             startIcon={<EmailIcon />}
