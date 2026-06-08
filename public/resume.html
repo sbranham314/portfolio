@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Samuel Branham — Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    @page { margin: 0.65in 0.7in; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 9.5pt;
+      line-height: 1.55;
+      color: #1a1a2e;
+      background: #fff;
+      max-width: 8.5in;
+      margin: 0 auto;
+    }
+
+    .print-bar {
+      background: #0A0E1A;
+      color: #9BA3AF;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 12px;
+    }
+    .print-bar strong { color: #E8EAF0; }
+    .print-bar button {
+      background: #00D4FF;
+      color: #0A0E1A;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .print-bar button:hover { background: #33DDFF; }
+
+    .resume { padding: 32px 48px 48px; }
+
+    .header {
+      border-bottom: 2.5px solid #00D4FF;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .name {
+      font-size: 22pt;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #0A0E1A;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .title-line {
+      font-size: 10pt;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 5px;
+    }
+    .contact { font-size: 8.5pt; color: #666; }
+    .contact a { color: #0066CC; text-decoration: none; }
+
+    .section { margin-bottom: 16px; }
+
+    .section-title {
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #0066CC;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 3px;
+      margin-bottom: 9px;
+    }
+
+    .summary { color: #333; }
+
+    .competencies {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 24px;
+    }
+    .comp-row { font-size: 8.5pt; color: #333; }
+    .comp-row strong { color: #1a1a2e; }
+
+    .job { margin-bottom: 13px; page-break-inside: avoid; }
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .job-title { font-weight: 700; font-size: 10pt; color: #0A0E1A; }
+    .job-period { font-size: 8.5pt; color: #666; white-space: nowrap; flex-shrink: 0; }
+    .job-company { font-size: 9.5pt; font-weight: 600; color: #0066CC; margin-top: 1px; }
+    .job-meta { font-size: 8pt; color: #888; margin-bottom: 5px; }
+    .job-promotion {
+      font-size: 7.5pt;
+      font-weight: 600;
+      color: #00886A;
+      margin-top: 2px;
+    }
+    .job ul { padding-left: 13px; margin-top: 5px; }
+    .job li { font-size: 8.5pt; color: #333; margin-bottom: 3px; line-height: 1.5; }
+
+    .edu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 24px;
+    }
+    .edu-item strong { color: #0A0E1A; font-size: 9pt; display: block; margin-bottom: 1px; }
+    .edu-item span { color: #555; font-size: 8.5pt; }
+
+    @media print {
+      .print-bar { display: none !important; }
+      .resume { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="print-bar">
+  <span><strong>Samuel Branham</strong> — Resume &nbsp;·&nbsp; For best results open in Chrome → Save as PDF</span>
+  <button onclick="window.print()">Save as PDF</button>
+</div>
+
+<div class="resume">
+
+  <div class="header">
+    <div class="name">Samuel Branham</div>
+    <div class="title-line">Senior Software Engineer &amp; Technical Lead &nbsp;·&nbsp; 13 Years Building Enterprise Systems</div>
+    <div class="contact">
+      Knightdale, NC &nbsp;·&nbsp;
+      <a href="mailto:sbranham314@gmail.com">sbranham314@gmail.com</a> &nbsp;·&nbsp;
+      <a href="https://linkedin.com/in/samuelbranham">linkedin.com/in/samuelbranham</a> &nbsp;·&nbsp;
+      <a href="https://github.com/sbranham314">github.com/sbranham314</a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Professional Summary</div>
+    <p class="summary">
+      Senior software engineer and technical lead with 13 years building production enterprise, government, and retail systems.
+      Full-stack architect with deep hands-on expertise across .NET, Java, React, and Angular on Azure and AWS.
+      Led the AWS modernization of DC's unemployment insurance platform during the COVID-19 surge and currently driving engineering for a
+      commission and performance platform serving 6,600+ employees at a national scale retail operation.
+      Established team-wide patterns for AI-assisted development using Claude; active Azure certification track with AZ-104 earned and
+      AZ-305 Solutions Architect Expert in progress.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Core Competencies</div>
+    <div class="competencies">
+      <div class="comp-row"><strong>Languages &amp; Frameworks:</strong> C# / .NET 8–10, Java / Spring Boot, TypeScript, JavaScript, React, Angular, SQL, Visual Basic</div>
+      <div class="comp-row"><strong>Cloud &amp; Infrastructure:</strong> Azure (Functions, API Management, App Service, Storage, DevOps), AWS (EC2, Lambda), Docker</div>
+      <div class="comp-row"><strong>Architecture &amp; Patterns:</strong> REST / OpenAPI, microservices, event-driven, domain-driven design, 3-tier, CI/CD</div>
+      <div class="comp-row"><strong>Data:</strong> Microsoft SQL Server, PostgreSQL, Entity Framework Core, relational design, federal compliance integrations</div>
+      <div class="comp-row"><strong>AI-Assisted Development:</strong> Claude, GitHub Copilot — established team patterns; building agentic AI pipeline for SaaS</div>
+      <div class="comp-row"><strong>Leadership:</strong> Scrum Master, 10-person support team lead, mentorship, technical interviews, code review governance</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Professional Experience</div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Software Engineer III &amp; Scrum Master</div>
+        <div class="job-period">Jun 2025 – Present</div>
+      </div>
+      <div class="job-company">Victra — Verizon Authorized Retailer</div>
+      <div class="job-meta">Raleigh, NC (Hybrid)</div>
+      <ul>
+        <li>Lead engineer and Scrum Master on a team of 8 (6 developers, 1 QA, 1 PO) building internal applications supporting 1,500+ Verizon-authorized stores nationwide.</li>
+        <li>Lead engineer on Contribution Matrix — a new performance and commission-calculation platform serving 6,600+ Victra employees; designs how sales contribution is calculated per representative and feeds the commission engine.</li>
+        <li>Architect and ship features for Metric Management Center (MMC): commission overrides, coupon overrides, sales adjustments, and inventory data integrated with multiple downstream systems via REST APIs.</li>
+        <li>Driving POS-agnostic architecture: re-engineering integration layers so Victra's applications are decoupled from any specific point-of-sale platform.</li>
+        <li>Led migration of Azure Function App from .NET 8 to .NET 10 with zero downtime. Established team-wide patterns for AI-assisted development using Claude across the full SDLC.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Senior Software Engineer</div>
+        <div class="job-period">Apr 2018 – Apr 2025</div>
+      </div>
+      <div class="job-company">DC Department of Employment Services</div>
+      <div class="job-meta">Washington, D.C. / Remote &nbsp;·&nbsp; <span class="job-promotion">Promoted to Senior Engineer · Mar 2020</span></div>
+      <ul>
+        <li>Core engineer on the AWS-based modernization of DC's unemployment insurance platform — owned Angular frontend, middle tier, and backend. Stack: Angular, AWS EC2, AWS Lambda, SQL Server, REST APIs with queue-based messaging.</li>
+        <li>Owned end-to-end delivery during the COVID-19 surge when claims volume jumped 10x+ overnight; worked 14-hour days enabling benefit payments to tens of thousands of DC residents during the pandemic.</li>
+        <li>Integrated with multiple federal systems (IRS, SSA, US DOL) via REST APIs for compliance data exchange, validation, and benefit eligibility verification.</li>
+        <li>Led a 10-person support team handling production incidents and on-call response for both the legacy .NET platform and the AWS modernization running in parallel.</li>
+        <li>Mentored junior developers, led code reviews, and served as senior technical voice following the departure of more experienced engineers during the crisis.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Software Engineer</div>
+        <div class="job-period">Jul 2016 – Mar 2018</div>
+      </div>
+      <div class="job-company">Clear Info, LLC</div>
+      <div class="job-meta">Annapolis, MD</div>
+      <ul>
+        <li>Built backend services and REST API integrations using .NET, C#, and SQL Server for enterprise clients.</li>
+        <li>Designed and implemented relational data models supporting multi-system integrations.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Junior Software Engineer</div>
+        <div class="job-period">Jul 2014 – Jun 2016</div>
+      </div>
+      <div class="job-company">Rockwell Collins</div>
+      <div class="job-meta">Annapolis, MD</div>
+      <ul>
+        <li>Developed Java applications and backend services for avionics and defense systems in a regulated, high-reliability engineering environment.</li>
+        <li>Worked across the full stack with relational databases, REST services, and integration testing.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Software Engineer — Intern</div>
+        <div class="job-period">Sep 2013 – Jun 2014</div>
+      </div>
+      <div class="job-company">Agnik LLC</div>
+      <div class="job-meta">Columbia, MD</div>
+      <ul>
+        <li>Built data processing components in Java for a distributed analytics platform.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Education, Certifications &amp; Projects</div>
+    <div class="edu-grid">
+      <div class="edu-item">
+        <strong>BS, Computer Science</strong>
+        <span>University of Maryland, College Park · 2014</span>
+      </div>
+      <div class="edu-item">
+        <strong>Microsoft Azure Certifications</strong>
+        <span>AZ-104 Administrator Associate (2026) · AZ-900 Fundamentals · AZ-204 Developer Associate (Jun 2026) · AZ-305 Solutions Architect Expert (in progress)</span>
+      </div>
+      <div class="edu-item">
+        <strong>Additional Certifications (15 active)</strong>
+        <span>CompTIA Security+ (CE) · AWS Cloud Solutions Architect Specialization · DevOps on AWS · Architecting Solutions on AWS · and more</span>
+      </div>
+      <div class="edu-item">
+        <strong>StrataReport AI — Personal Project</strong>
+        <span>Multi-tenant SaaS generating AI-narrated reports. Stack: React, .NET 10, Azure Functions, PostgreSQL, Anthropic Claude API, agentic AI pipeline.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
