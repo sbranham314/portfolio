@@ -7,6 +7,8 @@ import {
   Chip,
   Stack,
   IconButton,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -62,8 +64,21 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.6, delay },
 });
 
+const EMAIL = 'sbranham314@gmail.com';
+
 export default function Hero() {
   const role = useTypewriter(ROLES);
+  const [toast, setToast] = useState(false);
+
+  const handleEmailClick = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setToast(true);
+    } catch {
+      // clipboard blocked — mailto still fires below
+    }
+    window.location.href = `mailto:${EMAIL}`;
+  };
 
   return (
     <Box
@@ -267,17 +282,12 @@ export default function Hero() {
                   icon: <LinkedInIcon fontSize="small" />,
                   label: 'LinkedIn',
                 },
-                {
-                  href: 'mailto:sbranham314@gmail.com',
-                  icon: <EmailIcon fontSize="small" />,
-                  label: 'Email',
-                },
               ].map(({ href, icon, label }) => (
                 <IconButton
                   key={label}
                   component="a"
                   href={href}
-                  target={href.startsWith('mailto') ? undefined : '_blank'}
+                  target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
                   sx={{
@@ -293,6 +303,21 @@ export default function Hero() {
                   {icon}
                 </IconButton>
               ))}
+              <IconButton
+                onClick={handleEmailClick}
+                aria-label="Email — click to copy address"
+                sx={{
+                  color: 'text.secondary',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  '&:hover': {
+                    color: 'primary.main',
+                    borderColor: 'rgba(0,212,255,0.3)',
+                    bgcolor: 'rgba(0,212,255,0.06)',
+                  },
+                }}
+              >
+                <EmailIcon fontSize="small" />
+              </IconButton>
             </Stack>
           </motion.div>
         </Box>
@@ -315,6 +340,22 @@ export default function Hero() {
           <ArrowDownwardIcon fontSize="small" />
         </IconButton>
       </Box>
+
+      <Snackbar
+        open={toast}
+        autoHideDuration={2500}
+        onClose={() => setToast(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setToast(false)}
+          severity="success"
+          variant="filled"
+          sx={{ bgcolor: '#00D4FF', color: '#0A0E1A', fontWeight: 600 }}
+        >
+          Email copied to clipboard
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
