@@ -60,9 +60,9 @@ export default function Contact() {
             variant="h2"
             sx={{ mb: 3, fontSize: { xs: '2.2rem', md: '3.2rem' } }}
           >
-            Let's work{' '}
+            Let's{' '}
             <Box component="span" sx={{ color: 'primary.main' }}>
-              together
+              connect
             </Box>
           </Typography>
           <Typography

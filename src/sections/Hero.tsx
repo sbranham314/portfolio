@@ -182,7 +182,7 @@ export default function Hero() {
 
           <motion.div {...fadeUp(0.3)}>
             <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 5 }}>
-              {['13+ Years Experience', 'Raleigh, NC'].map((tag) => (
+              {['13+ Years Experience', 'Tech Lead · Scrum Master', 'Raleigh, NC'].map((tag) => (
                 <Chip
                   key={tag}
                   label={tag}
@@ -239,7 +239,7 @@ export default function Hero() {
                 variant="text"
                 size="large"
                 startIcon={<DownloadIcon fontSize="small" />}
-                href="/resume.html"
+                href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{

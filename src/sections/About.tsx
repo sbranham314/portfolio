@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 
 const STATS = [
   { value: 13, suffix: '+', label: 'Years Experience' },
-  { value: 2, suffix: '', label: 'SaaS Products' },
+  { value: 8, suffix: '', label: 'Engineers Led' },
+  { value: 1500, suffix: '+', label: 'Stores Supported' },
   { value: 15, suffix: '', label: 'Certifications' },
-  { value: 100, suffix: '%', label: 'Full Stack' },
 ];
 
 function useCountUp(target: number, duration = 1400) {
@@ -145,9 +145,9 @@ export default function About() {
                   <Box component="span" sx={{ color: 'text.primary', fontWeight: 600 }}>
                     13+ years building production-grade systems
                   </Box>{' '}
-                  for government and enterprise clients. Currently based in Knightdale, NC, I specialize
+                  for government and enterprise clients. Based in the Raleigh, NC area, I specialize
                   in architecting cloud-native full-stack solutions using Azure, .NET, and React — and
-                  serving as Scrum Master for a team of 8 at Victra.
+                  currently lead a team of 8 engineers as Scrum Master and Software Engineer III at Victra.
                 </>,
                 <>
                   My background spans government systems in the Washington D.C. metro area — including
