@@ -1,8 +1,11 @@
-import { Box, Container, Typography, Button, Stack, IconButton, Divider } from '@mui/material';
+import { useState } from 'react';
+import { Box, Container, Typography, Button, Stack, IconButton, Divider, Snackbar, Alert } from '@mui/material';
 import { motion } from 'framer-motion';
 import EmailIcon from '@mui/icons-material/Email';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
+
+const EMAIL = 'sbranham314@gmail.com';
 
 const SOCIAL = [
   {
@@ -18,6 +21,18 @@ const SOCIAL = [
 ];
 
 export default function Contact() {
+  const [toast, setToast] = useState(false);
+
+  const handleEmailClick = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setToast(true);
+    } catch {
+      // clipboard blocked — mailto still fires below
+    }
+    window.location.href = `mailto:${EMAIL}`;
+  };
+
   return (
     <Box
       id="contact"
@@ -82,11 +97,10 @@ export default function Contact() {
 
           {/* Primary CTA */}
           <Button
-            component="a"
             variant="contained"
             size="large"
             startIcon={<EmailIcon />}
-            href="mailto:sbranham314@gmail.com"
+            onClick={handleEmailClick}
             sx={{
               bgcolor: 'primary.main',
               color: '#0A0E1A',
@@ -140,6 +154,22 @@ export default function Contact() {
           </Typography>
         </motion.div>
       </Container>
+
+      <Snackbar
+        open={toast}
+        autoHideDuration={2500}
+        onClose={() => setToast(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setToast(false)}
+          severity="success"
+          variant="filled"
+          sx={{ bgcolor: '#00D4FF', color: '#0A0E1A', fontWeight: 600 }}
+        >
+          Email copied to clipboard
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
