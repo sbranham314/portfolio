@@ -21,13 +21,13 @@ type Project = {
 const PROJECTS: Project[] = [
   {
     title: 'RetroStoreManager',
-    category: 'SaaS Platform',
+    category: 'Multi-Tenant SaaS · 4-Repo Architecture',
     description:
-      'A multi-tenant SaaS platform purpose-built for retro game and trading card game store owners. Features inventory management, point-of-sale, customer loyalty programs, and real-time business analytics.',
-    tech: ['React', 'TypeScript', 'Material UI', '.NET 8', 'Azure Functions', 'Azure SQL', 'GitHub Actions'],
+      'A multi-tenant SaaS for retro game and TCG store owners. The standout technical pieces: Claude Haiku vision auto-identifies games from customer trade-in photos (title, platform, condition) and pre-populates inventory — collapsing the highest-friction workflow into seconds. Tenant isolation enforced via JWT-extracted company_id and a custom [RequirePermission] RBAC attribute checked on every Azure Function. Webhook-driven Stripe billing with a trial-to-paid state machine. Built and operated by the same autonomous multi-agent CI/CD pipeline that runs StayRecap — agents write, review, test, and deploy across four coordinated repos.',
+    tech: ['React', 'TypeScript', 'Material UI', '.NET 8', 'Azure Functions', 'PostgreSQL', 'Claude (Vision)', 'Stripe', 'GitHub Actions'],
     status: 'In Development',
     statusColor: '#FF8A65',
-    links: { github: 'https://github.com/sbranham314' },
+    links: { github: 'https://github.com/retrostoremanager' },
     featured: true,
   },
   {
