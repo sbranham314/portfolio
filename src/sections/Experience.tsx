@@ -22,11 +22,11 @@ const EXPERIENCES: Experience[] = [
     current: true,
     tech: ['React', 'TypeScript', '.NET 10', 'Azure', 'SQL Server', 'Azure DevOps', 'Material UI'],
     bullets: [
-      'Lead engineer and Scrum Master on a team of 8 building internal applications supporting 1,500+ Verizon-authorized stores nationwide',
-      'Lead engineer on Contribution Matrix — a new performance and commission-calculation platform serving 6,600+ Victra employees company-wide',
-      'Architect and ship features for Metric Management Center (MMC): commission overrides, coupon overrides, sales adjustments, and inventory data integrated with multiple downstream systems via REST APIs',
-      "Driving POS-agnostic architecture, re-engineering integration layers so Victra's internal tools are decoupled from any specific point-of-sale platform",
-      'Established team-wide patterns for AI-assisted development using Claude across the full development lifecycle',
+      'Lead engineer and Scrum Master for a team of 8, shipping 5+ major features and a flagship platform launch in first year — supporting 1,500+ Verizon-authorized stores nationwide',
+      'Lead engineer on Contribution Matrix — new platform calculating performance contributions that drive commission payouts for 6,600+ Victra employees company-wide',
+      'Architect and ship features for Metric Management Center (MMC) — handling millions of sales transactions across the store network: commission overrides, coupon overrides, sales adjustments, and inventory sync via REST APIs',
+      "Drove POS-agnostic architecture, re-engineering integration layers so Victra's internal tools are decoupled from any specific point-of-sale platform — preserving optionality on a multi-million-dollar vendor decision",
+      'Established team-wide patterns for AI-assisted development using Claude, driving 3-5x productivity gains on boilerplate, refactors, and test scaffolding',
     ],
   },
   {
@@ -38,10 +38,11 @@ const EXPERIENCES: Experience[] = [
     promotion: 'Promoted to Senior · Mar 2020',
     tech: ['Angular', 'AWS EC2', 'AWS Lambda', '.NET', 'C#', 'SQL Server', 'REST APIs'],
     bullets: [
-      "Core engineer on the AWS-based modernization of DC's unemployment insurance platform — owned Angular frontend, middle tier, and backend services",
-      'Owned end-to-end delivery during the COVID-19 surge when claims volume jumped 10x+ overnight; worked 14-hour days enabling benefit payments to tens of thousands of DC residents',
+      "Core engineer on the AWS-based modernization of DC's unemployment insurance platform — owned Angular frontend, .NET middle tier, and Lambda backend services processing hundreds of thousands of claims",
+      'Owned end-to-end delivery during the COVID-19 surge when daily claim volume jumped 10x overnight — worked 14-hour days enabling tens of millions in benefit payments to DC residents when they needed it most',
       'Integrated with IRS, SSA, and US DOL via REST APIs for federal compliance data exchange, validation, and benefit eligibility verification',
-      'Led a 10-person support team handling production incidents and on-call response for both legacy and modernized platforms simultaneously',
+      'Led a 10-person support team handling production incidents and on-call response for both legacy and modernized platforms — kept critical incidents to single-digits/month at full population scale',
+      'Mentored 3 junior engineers into mid/senior promotions, establishing code review patterns and engineering standards still in use after my departure',
     ],
   },
   {
