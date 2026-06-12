@@ -6,6 +6,7 @@ import About from './sections/About';
 import Skills from './sections/Skills';
 import Experience from './sections/Experience';
 import Projects from './sections/Projects';
+import GithubActivity from './sections/GithubActivity';
 import Certifications from './sections/Certifications';
 import Contact from './sections/Contact';
 import AskAI from './components/AskAI';
@@ -21,6 +22,7 @@ export default function App() {
         <Skills />
         <Experience />
         <Projects />
+        <GithubActivity />
         <Certifications />
         <Contact />
         <AskAI />
