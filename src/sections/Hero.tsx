@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -25,15 +25,13 @@ const ROLES = [
 ];
 
 function useTypewriter(strings: string[]) {
-  const stringsRef = useRef(strings);
   const [roleIndex, setRoleIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    const list = stringsRef.current;
-    const current = list[roleIndex];
+  const current = strings[roleIndex];
 
+  useEffect(() => {
     if (!isDeleting && charIndex < current.length) {
       const id = setTimeout(() => setCharIndex((c) => c + 1), 50);
       return () => clearTimeout(id);
@@ -49,13 +47,13 @@ function useTypewriter(strings: string[]) {
     if (isDeleting && charIndex === 0) {
       const id = setTimeout(() => {
         setIsDeleting(false);
-        setRoleIndex((i) => (i + 1) % list.length);
+        setRoleIndex((i) => (i + 1) % strings.length);
       }, 400);
       return () => clearTimeout(id);
     }
-  }, [roleIndex, charIndex, isDeleting]);
+  }, [roleIndex, charIndex, isDeleting, current, strings.length]);
 
-  return stringsRef.current[roleIndex].slice(0, charIndex);
+  return current.slice(0, charIndex);
 }
 
 const fadeUp = (delay = 0) => ({
