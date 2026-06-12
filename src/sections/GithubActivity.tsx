@@ -14,13 +14,11 @@ import {
 import { motion } from 'framer-motion';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import CommitIcon from '@mui/icons-material/Commit';
-import CallMergeIcon from '@mui/icons-material/CallMerge';
 import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
-import AltRouteIcon from '@mui/icons-material/AltRoute';
-import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 
+// Personal account + the project orgs to surface (their public repos are merged in).
 const USER = 'sbranham314';
+const ORGS = ['retrostoremanager', 'strata-reports-ai'];
 
 type Profile = {
   name?: string;
@@ -28,14 +26,33 @@ type Profile = {
   avatar_url: string;
   html_url: string;
   public_repos: number;
-  followers: number;
-  bio?: string;
   created_at?: string;
 };
 
-type Activity = { id: string; type: string; repo: string; repoUrl: string; text: string; when: string };
+type Org = { login: string; name?: string; avatar_url: string; html_url: string };
+type Repo = {
+  id: number;
+  name: string;
+  owner: string;
+  html_url: string;
+  description?: string;
+  language?: string;
+  stars: number;
+  pushed_at: string;
+};
 
-const cap = (s?: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
+const LANG_COLOR: Record<string, string> = {
+  TypeScript: '#3178c6',
+  JavaScript: '#f1e05a',
+  'C#': '#178600',
+  Python: '#3572A5',
+  HTML: '#e34c26',
+  CSS: '#563d7c',
+  Java: '#b07219',
+  Shell: '#89e051',
+  Vue: '#41b883',
+  Dockerfile: '#384d54',
+};
 
 function timeAgo(iso: string): string {
   const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -52,48 +69,20 @@ function timeAgo(iso: string): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function summarize(e: any): Activity | null {
-  const repo: string = e?.repo?.name || '';
-  if (!repo) return null;
-  const base = { id: String(e.id), type: e.type, repo, repoUrl: `https://github.com/${repo}`, when: timeAgo(e.created_at) };
-  switch (e.type) {
-    case 'PushEvent': {
-      const n = e.payload?.commits?.length || e.payload?.size || 1;
-      return { ...base, text: `Pushed ${n} commit${n > 1 ? 's' : ''} to` };
-    }
-    case 'PullRequestEvent': {
-      const merged = e.payload?.pull_request?.merged;
-      return { ...base, text: merged ? 'Merged a pull request in' : `${cap(e.payload?.action)} a pull request in` };
-    }
-    case 'IssuesEvent':
-      return { ...base, text: `${cap(e.payload?.action)} an issue in` };
-    case 'CreateEvent': {
-      const rt = e.payload?.ref_type;
-      if (rt === 'repository') return { ...base, text: 'Created repository' };
-      return { ...base, text: `Created a ${rt || 'ref'} in` };
-    }
-    case 'ReleaseEvent':
-      return { ...base, text: 'Published a release in' };
-    case 'ForkEvent':
-      return { ...base, text: 'Forked' };
-    case 'WatchEvent':
-      return { ...base, text: 'Starred' };
-    default:
-      return null;
-  }
-}
-
-const ICONS: Record<string, ReactNode> = {
-  PushEvent: <CommitIcon fontSize="small" />,
-  PullRequestEvent: <CallMergeIcon fontSize="small" />,
-  WatchEvent: <StarBorderRoundedIcon fontSize="small" />,
-  ForkEvent: <AltRouteIcon fontSize="small" />,
-  CreateEvent: <AddCircleOutlinedIcon fontSize="small" />,
-};
+const toRepo = (r: any): Repo => ({
+  id: r.id,
+  name: r.name,
+  owner: r.owner?.login || '',
+  html_url: r.html_url,
+  description: r.description || undefined,
+  language: r.language || undefined,
+  stars: r.stargazers_count || 0,
+  pushed_at: r.pushed_at,
+});
 
 function Stat({ value, label }: { value: ReactNode; label: string }) {
   return (
-    <Box sx={{ textAlign: 'center', minWidth: 64 }}>
+    <Box sx={{ textAlign: 'center', minWidth: 60 }}>
       <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', lineHeight: 1.1 }}>
         {value}
       </Typography>
@@ -106,8 +95,9 @@ function Stat({ value, label }: { value: ReactNode; label: string }) {
 
 export default function GithubActivity() {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [activity, setActivity] = useState<Activity[]>([]);
-  const [stars, setStars] = useState<number | null>(null);
+  const [orgs, setOrgs] = useState<Org[]>([]);
+  const [repos, setRepos] = useState<Repo[]>([]);
+  const [stats, setStats] = useState<{ repoCount: number; stars: number }>({ repoCount: 0, stars: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -116,64 +106,81 @@ export default function GithubActivity() {
 
     async function load() {
       try {
-        const cached = sessionStorage.getItem('gh-activity-v1');
+        const cached = sessionStorage.getItem('gh-activity-v2');
         if (cached) {
           const c = JSON.parse(cached);
           setProfile(c.profile);
-          setActivity(c.activity);
-          setStars(c.stars);
+          setOrgs(c.orgs);
+          setRepos(c.repos);
+          setStats(c.stats);
           setLoading(false);
           return;
         }
       } catch {
-        /* ignore cache errors */
+        /* ignore */
       }
 
+      const json = (url: string, fallback: unknown) =>
+        fetch(url).then((r) => (r.ok ? r.json() : fallback)).catch(() => fallback);
+
       try {
-        const [uRes, eRes, rRes] = await Promise.all([
-          fetch(`https://api.github.com/users/${USER}`),
-          fetch(`https://api.github.com/users/${USER}/events/public?per_page=30`),
-          fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`),
+        const [u, userRepos, orgProfiles, orgRepoLists] = await Promise.all([
+          json(`https://api.github.com/users/${USER}`, null),
+          json(`https://api.github.com/users/${USER}/repos?per_page=100&sort=pushed`, []),
+          Promise.all(ORGS.map((o) => json(`https://api.github.com/orgs/${o}`, null))),
+          Promise.all(ORGS.map((o) => json(`https://api.github.com/orgs/${o}/repos?per_page=100&sort=pushed`, []))),
         ]);
-        if (!uRes.ok) throw new Error('profile fetch failed');
-        const u = await uRes.json();
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const events: any[] = eRes.ok ? await eRes.json() : [];
+        if (!u) throw new Error('profile unavailable');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const repos: any[] = rRes.ok ? await rRes.json() : [];
+        const uu = u as any;
 
         const prof: Profile = {
-          name: u.name,
-          login: u.login,
-          avatar_url: u.avatar_url,
-          html_url: u.html_url,
-          public_repos: u.public_repos,
-          followers: u.followers,
-          bio: u.bio,
-          created_at: u.created_at,
+          name: uu.name,
+          login: uu.login,
+          avatar_url: uu.avatar_url,
+          html_url: uu.html_url,
+          public_repos: uu.public_repos,
+          created_at: uu.created_at,
         };
-        const seen = new Set<string>();
-        const acts = (Array.isArray(events) ? events : [])
-          .map(summarize)
-          .filter((a): a is Activity => a !== null)
-          .filter((a) => {
-            const key = `${a.text}|${a.repo}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          })
-          .slice(0, 7);
-        const starCount = Array.isArray(repos)
-          ? repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0)
-          : 0;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const orgList: Org[] = (orgProfiles as any[])
+          .filter(Boolean)
+          .map((o) => ({ login: o.login, name: o.name, avatar_url: o.avatar_url, html_url: o.html_url || `https://github.com/${o.login}` }));
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const allRaw: any[] = [
+          ...(Array.isArray(userRepos) ? (userRepos as any[]) : []),
+          ...(orgRepoLists as any[][]).flat(),
+        ];
+        const merged = allRaw
+          .filter((r) => r && !r.fork)
+          .map(toRepo)
+          .sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime());
+
+        const dedup = new Map<number, Repo>();
+        merged.forEach((r) => dedup.has(r.id) || dedup.set(r.id, r));
+        const topRepos = Array.from(dedup.values()).slice(0, 6);
+
+        const repoCount =
+          (uu.public_repos || 0) +
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (orgProfiles as any[]).filter(Boolean).reduce((s, o) => s + (o.public_repos || 0), 0);
+        const stars = Array.from(dedup.values()).reduce((s, r) => s + r.stars, 0);
 
         if (cancelled) return;
         setProfile(prof);
-        setActivity(acts);
-        setStars(starCount);
+        setOrgs(orgList);
+        setRepos(topRepos);
+        setStats({ repoCount, stars });
         setLoading(false);
         try {
-          sessionStorage.setItem('gh-activity-v1', JSON.stringify({ profile: prof, activity: acts, stars: starCount }));
+          sessionStorage.setItem(
+            'gh-activity-v2',
+            JSON.stringify({ profile: prof, orgs: orgList, repos: topRepos, stats: { repoCount, stars } }),
+          );
         } catch {
           /* ignore */
         }
@@ -215,7 +222,7 @@ export default function GithubActivity() {
         </motion.div>
 
         <Grid container spacing={3}>
-          {/* Profile + stats */}
+          {/* Profile + orgs */}
           <Grid size={{ xs: 12, md: 5 }}>
             <Paper
               sx={{
@@ -255,22 +262,52 @@ export default function GithubActivity() {
                     </Box>
                   </Stack>
 
-                  {profile?.bio && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, lineHeight: 1.7 }}>
-                      {profile.bio}
-                    </Typography>
-                  )}
-
                   <Stack
                     direction="row"
                     spacing={2}
                     sx={{ justifyContent: 'space-around', py: 2, mb: 2.5, borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
                   >
-                    <Stat value={profile?.public_repos ?? '—'} label="Repos" />
+                    <Stat value={stats.repoCount || profile?.public_repos || '—'} label="Repos" />
                     {profile?.created_at && <Stat value={new Date(profile.created_at).getFullYear()} label="Since" />}
-                    {!!profile && profile.followers > 0 && <Stat value={profile.followers} label="Followers" />}
-                    {stars != null && stars > 0 && <Stat value={stars} label="Stars" />}
+                    {stats.stars > 0 && <Stat value={stats.stars} label="Stars" />}
                   </Stack>
+
+                  {orgs.length > 0 && (
+                    <Box sx={{ mb: 2.5 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, letterSpacing: '0.1em' }}>
+                        ORGANIZATIONS
+                      </Typography>
+                      <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
+                        {orgs.map((o) => (
+                          <Box
+                            key={o.login}
+                            component="a"
+                            href={o.html_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.75,
+                              textDecoration: 'none',
+                              color: 'text.secondary',
+                              border: '1px solid rgba(255,255,255,0.1)',
+                              borderRadius: 2,
+                              px: 1,
+                              py: 0.5,
+                              transition: 'border-color 0.2s, color 0.2s',
+                              '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+                            }}
+                          >
+                            <Avatar src={o.avatar_url} sx={{ width: 20, height: 20 }} />
+                            <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                              {o.name || o.login}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    </Box>
+                  )}
 
                   <Button
                     variant="outlined"
@@ -293,7 +330,7 @@ export default function GithubActivity() {
             </Paper>
           </Grid>
 
-          {/* Recent activity */}
+          {/* Recent repositories */}
           <Grid size={{ xs: 12, md: 7 }}>
             <Paper
               sx={{
@@ -305,65 +342,75 @@ export default function GithubActivity() {
               }}
             >
               <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: '0.12em', display: 'block', mb: 2 }}>
-                Recent Activity
+                Recently Active Repositories
               </Typography>
 
               {loading ? (
-                <Stack spacing={2}>
+                <Stack spacing={1.5}>
                   {[0, 1, 2, 3].map((k) => (
-                    <Skeleton key={k} variant="rounded" height={36} />
+                    <Skeleton key={k} variant="rounded" height={56} />
                   ))}
                 </Stack>
-              ) : error || activity.length === 0 ? (
+              ) : error || repos.length === 0 ? (
                 <Typography variant="body2" color="text.secondary">
-                  Live activity is taking a break — see everything on{' '}
-                  <Box
-                    component="a"
-                    href={`https://github.com/${USER}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{ color: 'primary.main', textDecoration: 'none' }}
-                  >
+                  Live data is taking a break — see everything on{' '}
+                  <Box component="a" href={`https://github.com/${USER}`} target="_blank" rel="noopener noreferrer" sx={{ color: 'primary.main', textDecoration: 'none' }}>
                     GitHub
                   </Box>
                   .
                 </Typography>
               ) : (
-                <Stack spacing={0.5}>
-                  {activity.map((a) => (
+                <Stack spacing={1}>
+                  {repos.map((r) => (
                     <Box
-                      key={a.id}
+                      key={r.id}
+                      component="a"
+                      href={r.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1.5,
-                        py: 1.25,
-                        px: 1,
+                        display: 'block',
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        p: 1.5,
                         borderRadius: 2,
-                        transition: 'background-color 0.2s',
-                        '&:hover': { bgcolor: 'rgba(0,212,255,0.05)' },
+                        border: '1px solid transparent',
+                        transition: 'background-color 0.2s, border-color 0.2s',
+                        '&:hover': { bgcolor: 'rgba(0,212,255,0.05)', borderColor: 'rgba(0,212,255,0.2)' },
                       }}
                     >
-                      <Box sx={{ color: 'primary.main', display: 'flex', flexShrink: 0 }}>
-                        {ICONS[a.type] || <CommitIcon fontSize="small" />}
+                      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700, color: 'text.primary', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <Box component="span" color="text.secondary" sx={{ fontWeight: 400 }}>
+                            {r.owner}/
+                          </Box>
+                          {r.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+                          {timeAgo(r.pushed_at)}
+                        </Typography>
                       </Box>
-                      <Typography variant="body2" sx={{ flex: 1, minWidth: 0 }}>
-                        <Box component="span" color="text.secondary">
-                          {a.text}{' '}
-                        </Box>
-                        <Box
-                          component="a"
-                          href={a.repoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{ color: 'text.primary', fontWeight: 600, textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
-                        >
-                          {a.repo}
-                        </Box>
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
-                        {a.when}
-                      </Typography>
+                      {r.description && (
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.5 }}>
+                          {r.description}
+                        </Typography>
+                      )}
+                      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mt: 0.75 }}>
+                        {r.language && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: LANG_COLOR[r.language] || '#9BA3AF' }} />
+                            <Typography variant="caption" color="text.secondary">
+                              {r.language}
+                            </Typography>
+                          </Box>
+                        )}
+                        {r.stars > 0 && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, color: 'text.secondary' }}>
+                            <StarBorderRoundedIcon sx={{ fontSize: 14 }} />
+                            <Typography variant="caption">{r.stars}</Typography>
+                          </Box>
+                        )}
+                      </Stack>
                     </Box>
                   ))}
                 </Stack>
