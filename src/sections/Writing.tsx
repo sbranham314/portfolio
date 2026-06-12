@@ -17,7 +17,7 @@ const POSTS: Post[] = [
     date: 'June 12, 2026',
     readingTime: '6 min read',
     excerpt:
-      "Notes from building two SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code — what works, what doesn't, and what it changes about the job.",
+      "Notes from building two SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code. What works, what doesn't, and what it changes about the job.",
     href: '/writing/building-software-with-ai-agents.html',
     tags: ['AI Agents', 'Engineering'],
   },
