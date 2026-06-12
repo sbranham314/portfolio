@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What I Learned Building Software with Autonomous AI Agents — Samuel Branham</title>
+  <meta name="description" content="Notes from building two SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code — what works, what doesn't, and what it changes about the job." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://samuelbranham.com/writing/building-software-with-ai-agents.html" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="What I Learned Building Software with Autonomous AI Agents" />
+  <meta property="og:description" content="Notes from building two SaaS products almost entirely through a pipeline of AI agents — what works, what doesn't, and what it changes about the job." />
+  <meta property="og:url" content="https://samuelbranham.com/writing/building-software-with-ai-agents.html" />
+  <meta property="og:image" content="https://samuelbranham.com/profile.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="What I Learned Building Software with Autonomous AI Agents" />
+  <meta name="twitter:description" content="Notes from building two SaaS products almost entirely through a pipeline of AI agents." />
+  <meta name="twitter:image" content="https://samuelbranham.com/profile.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "What I Learned Building Software with Autonomous AI Agents",
+    "datePublished": "2026-06-12",
+    "dateModified": "2026-06-12",
+    "author": { "@type": "Person", "name": "Samuel Branham", "url": "https://samuelbranham.com/" },
+    "publisher": { "@type": "Person", "name": "Samuel Branham" },
+    "url": "https://samuelbranham.com/writing/building-software-with-ai-agents.html",
+    "mainEntityOfPage": "https://samuelbranham.com/writing/building-software-with-ai-agents.html",
+    "description": "Notes from building two SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code."
+  }
+  </script>
+
+  <style>
+    :root { --bg: #0A0E1A; --fg: #E8EAF0; --muted: #9BA3AF; --accent: #00D4FF; --rule: rgba(255,255,255,0.08); }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.8;
+      font-size: 18px;
+    }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 32px 24px 96px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 40px; }
+    .back { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: 0.01em; }
+    .back:hover { color: var(--accent); }
+    .brand { color: var(--fg); text-decoration: none; font-weight: 800; letter-spacing: -0.02em; }
+    .brand:hover { color: var(--accent); }
+    article header { border-bottom: 1px solid var(--rule); padding-bottom: 28px; margin-bottom: 40px; }
+    .kicker { color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; }
+    h1 { font-size: 2.1rem; line-height: 1.18; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 16px; }
+    .meta { color: var(--muted); font-size: 14px; }
+    article p { margin: 0 0 24px; }
+    article h2 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; margin: 44px 0 14px; }
+    article a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,212,255,0.35); }
+    article a:hover { border-bottom-color: var(--accent); }
+    strong { color: #fff; font-weight: 700; }
+    .lead { font-size: 1.18rem; color: #cdd2dc; }
+    .footer { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 15px; }
+    .footer a { color: var(--accent); text-decoration: none; }
+    @media (max-width: 560px) { body { font-size: 17px; } h1 { font-size: 1.7rem; } .wrap { padding: 24px 20px 72px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="/">&larr; samuelbranham.com</a>
+      <a class="brand" href="/">Samuel Branham</a>
+    </div>
+
+    <article>
+      <header>
+        <div class="kicker">Writing</div>
+        <h1>What I Learned Building Software with Autonomous AI Agents</h1>
+        <div class="meta">June 12, 2026 &middot; 6 min read</div>
+      </header>
+
+      <p class="lead">A few months ago I caught myself reviewing a pull request at midnight that I hadn't asked anyone to write. An agent had noticed a failing integration test in one of my projects, traced it to a bad assumption in a serializer, fixed it, and opened the PR with a description that was honestly better than most I get from people. I approved it and went to bed.</p>
+
+      <p>That's roughly where I've landed after spending the better part of a year building two SaaS products &mdash; StayRecap and RetroStoreManager &mdash; almost entirely through a pipeline of AI agents.</p>
+
+      <p>I don't mean "AI-assisted" in the tab-complete sense. I mean a pipeline that reads a spec, works out what needs to change, and hands the work to agents that write the code, review each other, run the tests, and ship it &mdash; across four separate repositories per product. When something breaks in production, it takes a swing at fixing itself before I'm awake.</p>
+
+      <p>I want to write down what that's actually like, because most of what I read about agentic coding is either breathless or apocalyptic, and the truth is more mundane and more interesting than either.</p>
+
+      <h2>Most of the job was never the typing</h2>
+      <p>The thing that caught me off guard is how much of engineering turns out to be coordination, not code. Agents are genuinely good at the mechanical majority of the work: boilerplate, wiring services together, scaffolding tests, the kind of fifty-file refactor that's tedious but not hard. On the team I lead at Victra, leaning into this for exactly that category of work has been a real three-to-five-times speedup on the grindy parts of a sprint &mdash; the parts nobody was excited to do anyway.</p>
+      <p>What it doesn't do is decide what's worth building. That part got more important, not less.</p>
+
+      <h2>Agents will build the wrong thing, beautifully</h2>
+      <p>There's a ceiling, and it's the same one you hit with a fast junior engineer who doesn't yet hold the whole system in their head. An agent will take a vague instruction and confidently produce something clean, well-tested, and not what you meant. The cost of a sloppy spec used to be a few wasted hours. Now it's a few wasted repos.</p>
+      <p>So the spec became the product. I spend more time than I used to writing down what "done" looks like &mdash; the constraints, the edge cases, the things that must never happen &mdash; because that document is now the highest-leverage thing I touch all day. Vague in, polished-wrong out.</p>
+
+      <h2>The hard line: the AI never does the math</h2>
+      <p>StayRecap generates financial reports, and property owners make real decisions off them. A made-up number there isn't a bug, it's a liability. So the whole thing is built so the model literally cannot invent a figure. A deterministic layer computes and verifies every number first; the language model only gets to describe numbers that already exist. It writes the sentence. It never does the arithmetic.</p>
+      <p>That split &mdash; let the model handle language, never let it handle truth &mdash; is the most useful design rule I've taken from any of this. It isn't specific to reports. Anywhere correctness matters, the move is the same: pin the model to verified ground and let it be fluent on top of that, never underneath it.</p>
+
+      <h2>Where this leaves me</h2>
+      <p>My job didn't shrink. It moved up a level. I write fewer functions and spend more time on the things that were always the actual work &mdash; deciding what to build, drawing the boundaries between systems, and reviewing with the kind of suspicion that comes from thirteen years of watching confident code fail in interesting ways.</p>
+      <p>I don't think this replaces engineers. I think it quietly retires the part of the job most of us liked least and puts a lot more weight on judgment. That's a trade I'll take.</p>
+
+      <div class="footer">
+        Written by Samuel Branham, a senior software engineer in Knightdale, NC. There's an <a href="/">AI assistant on my site</a> that knows my résumé better than I do &mdash; ask it anything, or just <a href="/">have a look around</a>.
+      </div>
+    </article>
+  </div>
+</body>
+</html>
