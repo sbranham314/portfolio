@@ -19,6 +19,11 @@ import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 // Personal account + the project orgs to surface (their public repos are merged in).
 const USER = 'sbranham314';
 const ORGS = ['retrostoremanager', 'strata-reports-ai'];
+// Friendly display names for orgs whose GitHub login differs from the product brand.
+const ORG_LABELS: Record<string, string> = {
+  retrostoremanager: 'RetroStoreManager',
+  'strata-reports-ai': 'StayRecap',
+};
 
 type Profile = {
   name?: string;
@@ -106,7 +111,7 @@ export default function GithubActivity() {
 
     async function load() {
       try {
-        const cached = sessionStorage.getItem('gh-activity-v3');
+        const cached = sessionStorage.getItem('gh-activity-v4');
         if (cached) {
           const c = JSON.parse(cached);
           setProfile(c.profile);
@@ -148,7 +153,7 @@ export default function GithubActivity() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const orgList: Org[] = (orgProfiles as any[])
           .filter(Boolean)
-          .map((o) => ({ login: o.login, name: o.name, avatar_url: o.avatar_url, html_url: o.html_url || `https://github.com/${o.login}`, repos: o.public_repos }));
+          .map((o) => ({ login: o.login, name: ORG_LABELS[o.login] || o.name, avatar_url: o.avatar_url, html_url: o.html_url || `https://github.com/${o.login}`, repos: o.public_repos }));
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const allRaw: any[] = [
@@ -178,7 +183,7 @@ export default function GithubActivity() {
         setLoading(false);
         try {
           sessionStorage.setItem(
-            'gh-activity-v3',
+            'gh-activity-v4',
             JSON.stringify({ profile: prof, orgs: orgList, repos: topRepos, stats: { repoCount, stars } }),
           );
         } catch {
