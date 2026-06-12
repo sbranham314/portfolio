@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import StrataCaseStudy from './StrataCaseStudy';
 
 type Project = {
@@ -16,6 +17,7 @@ type Project = {
   links: { github?: string; demo?: string };
   featured: boolean;
   caseStudy?: boolean;
+  tryChat?: boolean;
 };
 
 const PROJECTS: Project[] = [
@@ -41,6 +43,18 @@ const PROJECTS: Project[] = [
     links: { github: 'https://github.com/strata-reports-ai/orchestrator-strata-reports' },
     featured: true,
     caseStudy: true,
+  },
+  {
+    title: 'AI Résumé Assistant',
+    category: 'This Site · Retrieval-Grounded Chatbot',
+    description:
+      'The "Ask AI about me" assistant on this very page. Visitors ask about my background and get answers grounded strictly in my résumé — it will not invent an employer, date, or skill that is not there, and it politely declines anything off-topic. Built as a serverless Azure Function that proxies Claude Haiku 4.5 so the API key stays server-side, with a prompt hardened against injection and topic drift, plus input caps, per-IP and global daily rate limits, and a hard spend ceiling for cost control. It deploys alongside this site through the same GitHub Actions pipeline.',
+    tech: ['React', 'TypeScript', 'Azure Functions', 'Claude Haiku 4.5', 'Anthropic SDK', 'GitHub Actions'],
+    status: 'Live',
+    statusColor: '#66BB6A',
+    links: {},
+    featured: true,
+    tryChat: true,
   },
 ];
 
@@ -156,6 +170,23 @@ export default function Projects() {
 
                   {/* Links */}
                   <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', gap: 1 }}>
+                    {project.tryChat && (
+                      <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<AutoAwesomeRoundedIcon fontSize="small" />}
+                        onClick={() => window.dispatchEvent(new Event('open-ask-ai'))}
+                        sx={{
+                          bgcolor: 'primary.main',
+                          color: '#0A0E1A',
+                          fontWeight: 700,
+                          boxShadow: 'none',
+                          '&:hover': { bgcolor: 'primary.light', boxShadow: 'none' },
+                        }}
+                      >
+                        Try it now
+                      </Button>
+                    )}
                     {project.caseStudy && (
                       <Button
                         variant="contained"

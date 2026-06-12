@@ -9,11 +9,11 @@ import {
   CircularProgress,
   Stack,
   Fab,
-  Tooltip,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
+import { keyframes } from '@emotion/react';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -30,6 +30,12 @@ const SUGGESTED = [
 
 const MAX_LEN = 600;
 
+const pulse = keyframes`
+  0% { box-shadow: 0 8px 24px ${ACCENT}55, 0 0 0 0 ${ACCENT}66; }
+  70% { box-shadow: 0 8px 24px ${ACCENT}55, 0 0 0 16px ${ACCENT}00; }
+  100% { box-shadow: 0 8px 24px ${ACCENT}55, 0 0 0 0 ${ACCENT}00; }
+`;
+
 export default function AskAI() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -43,6 +49,13 @@ export default function AskAI() {
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, loading, open]);
+
+  // Let other parts of the site (e.g. the Projects card) open the chat.
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener('open-ask-ai', handler);
+    return () => window.removeEventListener('open-ask-ai', handler);
+  }, []);
 
   async function send(text?: string) {
     const content = (text ?? input).trim();
@@ -87,23 +100,35 @@ export default function AskAI() {
 
   return (
     <>
-      <Tooltip title="Ask AI about Samuel" placement="left">
-        <Fab
-          color="primary"
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Ask AI about Samuel"
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-            zIndex: 1300,
-            color: '#0A0E1A',
-            boxShadow: `0 8px 24px ${ACCENT}55`,
-          }}
-        >
-          {open ? <CloseRoundedIcon /> : <AutoAwesomeRoundedIcon />}
-        </Fab>
-      </Tooltip>
+      <Fab
+        variant="extended"
+        color="primary"
+        onClick={() => setOpen((o) => !o)}
+        aria-label="Ask AI about Samuel"
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          zIndex: 1300,
+          color: '#0A0E1A',
+          fontWeight: 700,
+          px: 2.5,
+          boxShadow: `0 8px 24px ${ACCENT}55`,
+          ...(open ? {} : { animation: `${pulse} 2.4s ease-out infinite` }),
+        }}
+      >
+        {open ? (
+          <>
+            <CloseRoundedIcon sx={{ mr: 1 }} />
+            Close
+          </>
+        ) : (
+          <>
+            <AutoAwesomeRoundedIcon sx={{ mr: 1 }} />
+            Ask AI about me
+          </>
+        )}
+      </Fab>
 
       <AnimatePresence>
         {open && (
