@@ -22,7 +22,8 @@ Led the AWS modernization of DC's unemployment insurance platform during the COV
 - Lead engineer on Contribution Matrix — platform calculating performance contributions that drive commission payouts for 6,600+ employees.
 - Architects and ships Metric Management Center (MMC), handling millions of sales transactions: commission/coupon overrides, sales adjustments, inventory sync via REST APIs.
 - Drove POS-agnostic architecture, decoupling apps from any specific point-of-sale platform and preserving optionality on a multi-million-dollar vendor decision.
-- Led a .NET 8→10 Azure Function App migration with zero downtime; established Claude-based AI-assisted dev patterns yielding 3–5x productivity gains on boilerplate, refactors, and test scaffolding.
+- Led a .NET 8→10 Azure Function App migration with zero downtime.
+- Championed team-wide AI-assisted development using Claude, yielding 3–5x productivity gains on boilerplate, refactors, and test scaffolding.
 
 ### DC Department of Employment Services — Senior Software Engineer — Apr 2018–Apr 2025 — Washington, D.C./Remote (promoted to Senior, Mar 2020)
 - Core engineer on the AWS modernization of DC's unemployment insurance platform: Angular frontend, .NET middle tier, and AWS Lambda backend processing hundreds of thousands of claims. Stack: Angular, AWS EC2/Lambda, SQL Server, REST APIs with queue-based messaging.
