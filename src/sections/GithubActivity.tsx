@@ -29,7 +29,7 @@ type Profile = {
   created_at?: string;
 };
 
-type Org = { login: string; name?: string; avatar_url: string; html_url: string };
+type Org = { login: string; name?: string; avatar_url: string; html_url: string; repos?: number };
 type Repo = {
   id: number;
   name: string;
@@ -106,7 +106,7 @@ export default function GithubActivity() {
 
     async function load() {
       try {
-        const cached = sessionStorage.getItem('gh-activity-v2');
+        const cached = sessionStorage.getItem('gh-activity-v3');
         if (cached) {
           const c = JSON.parse(cached);
           setProfile(c.profile);
@@ -148,7 +148,7 @@ export default function GithubActivity() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const orgList: Org[] = (orgProfiles as any[])
           .filter(Boolean)
-          .map((o) => ({ login: o.login, name: o.name, avatar_url: o.avatar_url, html_url: o.html_url || `https://github.com/${o.login}` }));
+          .map((o) => ({ login: o.login, name: o.name, avatar_url: o.avatar_url, html_url: o.html_url || `https://github.com/${o.login}`, repos: o.public_repos }));
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const allRaw: any[] = [
@@ -178,7 +178,7 @@ export default function GithubActivity() {
         setLoading(false);
         try {
           sessionStorage.setItem(
-            'gh-activity-v2',
+            'gh-activity-v3',
             JSON.stringify({ profile: prof, orgs: orgList, repos: topRepos, stats: { repoCount, stars } }),
           );
         } catch {
@@ -277,7 +277,7 @@ export default function GithubActivity() {
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, letterSpacing: '0.1em' }}>
                         ORGANIZATIONS
                       </Typography>
-                      <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
+                      <Stack spacing={1}>
                         {orgs.map((o) => (
                           <Box
                             key={o.login}
@@ -288,21 +288,28 @@ export default function GithubActivity() {
                             sx={{
                               display: 'flex',
                               alignItems: 'center',
-                              gap: 0.75,
+                              gap: 1.25,
                               textDecoration: 'none',
-                              color: 'text.secondary',
-                              border: '1px solid rgba(255,255,255,0.1)',
+                              color: 'inherit',
+                              p: 1,
                               borderRadius: 2,
-                              px: 1,
-                              py: 0.5,
-                              transition: 'border-color 0.2s, color 0.2s',
-                              '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+                              border: '1px solid rgba(255,255,255,0.08)',
+                              transition: 'border-color 0.2s, background-color 0.2s',
+                              '&:hover': { borderColor: 'rgba(0,212,255,0.4)', bgcolor: 'rgba(0,212,255,0.04)' },
                             }}
                           >
-                            <Avatar src={o.avatar_url} sx={{ width: 20, height: 20 }} />
-                            <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                              {o.name || o.login}
-                            </Typography>
+                            <Avatar src={o.avatar_url} sx={{ width: 32, height: 32 }} />
+                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', lineHeight: 1.2 }}>
+                                {o.name || o.login}
+                              </Typography>
+                              {o.repos != null && (
+                                <Typography variant="caption" color="text.secondary">
+                                  {o.repos} public repo{o.repos === 1 ? '' : 's'}
+                                </Typography>
+                              )}
+                            </Box>
+                            <OpenInNewIcon sx={{ fontSize: 16, color: 'text.secondary', flexShrink: 0 }} />
                           </Box>
                         ))}
                       </Stack>
