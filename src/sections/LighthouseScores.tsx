@@ -60,7 +60,7 @@ export default function LighthouseScores() {
             Built with Care
           </Typography>
           <Typography variant="h6" component="p" sx={{ textAlign: 'center', color: 'text.secondary', fontWeight: 400, mb: 5 }}>
-            Google Lighthouse audit of this site
+            Google Lighthouse audit of this site (desktop)
           </Typography>
 
           <Stack

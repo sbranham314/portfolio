@@ -11,8 +11,11 @@ import Writing from './sections/Writing';
 import Certifications from './sections/Certifications';
 import LighthouseScores from './sections/LighthouseScores';
 import Contact from './sections/Contact';
-import AskAI from './components/AskAI';
-import CommandPalette from './components/CommandPalette';
+import { lazy, Suspense } from 'react';
+
+// Deferred: overlays not needed for first paint (trims the initial bundle).
+const AskAI = lazy(() => import('./components/AskAI'));
+const CommandPalette = lazy(() => import('./components/CommandPalette'));
 
 export default function App() {
   return (
@@ -32,8 +35,10 @@ export default function App() {
         <LighthouseScores />
         <Contact />
         </Box>
-        <AskAI />
-        <CommandPalette />
+        <Suspense fallback={null}>
+          <AskAI />
+          <CommandPalette />
+        </Suspense>
       </Box>
     </ThemeProvider>
   );
