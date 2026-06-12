@@ -95,7 +95,7 @@ export default function StrataCaseStudy({ open, onClose }: { open: boolean; onCl
               <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3rem' }, mt: 1, mb: 2 }}>
                 StayRecap
               </Typography>
-              <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, lineHeight: 1.7, mb: 5 }}>
+              <Typography variant="h6" component="p" sx={{ color: 'text.secondary', fontWeight: 400, lineHeight: 1.7, mb: 5 }}>
                 A multi-tenant SaaS that turns messy short-term-rental data into polished, owner-ready quarterly PDF
                 reports in under two minutes — and which is itself built and operated by an autonomous multi-agent CI/CD
                 pipeline.

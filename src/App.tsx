@@ -19,7 +19,8 @@ export default function App() {
       <CssBaseline />
       <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
         <Navbar />
-        <Hero />
+        <Box component="main">
+          <Hero />
         <About />
         <Skills />
         <Experience />
@@ -28,6 +29,7 @@ export default function App() {
         <Writing />
         <Certifications />
         <Contact />
+        </Box>
         <AskAI />
         <CommandPalette />
       </Box>

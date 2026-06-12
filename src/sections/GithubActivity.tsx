@@ -83,7 +83,7 @@ const toRepo = (r: any): Repo => ({
 function Stat({ value, label }: { value: ReactNode; label: string }) {
   return (
     <Box sx={{ textAlign: 'center', minWidth: 60 }}>
-      <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', lineHeight: 1.1 }}>
+      <Typography variant="h5" component="div" sx={{ fontWeight: 800, color: 'primary.main', lineHeight: 1.1 }}>
         {value}
       </Typography>
       <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: '0.04em' }}>
@@ -249,11 +249,11 @@ export default function GithubActivity() {
               ) : (
                 <>
                   <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2.5 }}>
-                    <Avatar src={profile?.avatar_url} sx={{ width: 56, height: 56, border: '2px solid rgba(0,212,255,0.3)' }}>
+                    <Avatar src={profile?.avatar_url} alt={`${profile?.name || 'Samuel Branham'} GitHub avatar`} sx={{ width: 56, height: 56, border: '2px solid rgba(0,212,255,0.3)' }}>
                       <GitHubIcon />
                     </Avatar>
                     <Box sx={{ minWidth: 0 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                      <Typography variant="h6" component="h3" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
                         {profile?.name || 'Samuel Branham'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
@@ -298,7 +298,7 @@ export default function GithubActivity() {
                               '&:hover': { borderColor: 'rgba(0,212,255,0.4)', bgcolor: 'rgba(0,212,255,0.04)' },
                             }}
                           >
-                            <Avatar src={o.avatar_url} sx={{ width: 32, height: 32 }} />
+                            <Avatar src={o.avatar_url} alt={`${o.name || o.login} logo`} sx={{ width: 32, height: 32 }} />
                             <Box sx={{ minWidth: 0, flex: 1 }}>
                               <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', lineHeight: 1.2 }}>
                                 {o.name || o.login}

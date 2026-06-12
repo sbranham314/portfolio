@@ -147,7 +147,7 @@ export default function Experience() {
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', gap: 1, mb: 0.5 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 700, flex: 1 }}>
+                    <Typography variant="h5" component="h3" sx={{ fontWeight: 700, flex: 1 }}>
                       {exp.role}
                     </Typography>
                     {exp.current && (

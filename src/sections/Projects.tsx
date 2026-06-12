@@ -126,7 +126,7 @@ export default function Projects() {
                       >
                         {project.category}
                       </Typography>
-                      <Typography variant="h5" sx={{ fontWeight: 700, mt: 0.25 }}>
+                      <Typography variant="h5" component="h3" sx={{ fontWeight: 700, mt: 0.25 }}>
                         {project.title}
                       </Typography>
                     </Box>

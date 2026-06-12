@@ -73,6 +73,7 @@ export default function Navbar() {
           <Toolbar sx={{ justifyContent: 'space-between', py: 0.5 }}>
             <Typography
               variant="h6"
+              component="div"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               sx={{
                 fontWeight: 900,
@@ -122,7 +123,7 @@ export default function Navbar() {
                 ))}
                 <Button
                   onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
-                  aria-label="Open command palette"
+                  aria-label={isMac ? '⌘K, open command palette' : 'Ctrl K, open command palette'}
                   sx={{
                     ml: 1,
                     minWidth: 0,

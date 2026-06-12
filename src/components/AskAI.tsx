@@ -104,7 +104,6 @@ export default function AskAI() {
         variant="extended"
         color="primary"
         onClick={() => setOpen((o) => !o)}
-        aria-label="Ask AI about Samuel"
         sx={{
           position: 'fixed',
           bottom: 24,

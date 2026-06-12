@@ -118,7 +118,7 @@ export default function Skills() {
                     >
                       <Icon fontSize="small" />
                     </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                    <Typography variant="h6" component="h3" sx={{ fontWeight: 700, color: 'text.primary' }}>
                       {title}
                     </Typography>
                   </Box>

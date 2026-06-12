@@ -81,7 +81,7 @@ export default function Writing() {
                 >
                   {post.date} &middot; {post.readingTime}
                 </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 700, mt: 0.5, mb: 1.5 }}>
+                <Typography variant="h5" component="h3" sx={{ fontWeight: 700, mt: 0.5, mb: 1.5 }}>
                   {post.title}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.8, mb: 2.5 }}>

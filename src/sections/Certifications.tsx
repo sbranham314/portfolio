@@ -168,7 +168,7 @@ export default function Certifications() {
                           mb: 0.75,
                         }}
                       />
-                      <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+                      <Typography variant="h6" component="h3" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
                         {name}
                       </Typography>
                       <Typography variant="caption" sx={{ color: '#0078D4', fontWeight: 600, letterSpacing: '0.06em' }}>
@@ -207,7 +207,7 @@ export default function Certifications() {
             }}
           >
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+              <Typography variant="h6" component="h3" sx={{ fontWeight: 700, mb: 0.5 }}>
                 15 Additional Certifications
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.7 }}>
