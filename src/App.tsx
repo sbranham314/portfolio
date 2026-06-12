@@ -11,6 +11,7 @@ import Writing from './sections/Writing';
 import Certifications from './sections/Certifications';
 import Contact from './sections/Contact';
 import AskAI from './components/AskAI';
+import CommandPalette from './components/CommandPalette';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
         <Certifications />
         <Contact />
         <AskAI />
+        <CommandPalette />
       </Box>
     </ThemeProvider>
   );

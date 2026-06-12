@@ -17,6 +17,9 @@ api/local.settings.json
 bin
 obj
 
+# Local writing notes (private, not published)
+writing-ideas.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

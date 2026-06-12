@@ -36,6 +36,7 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState('');
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.userAgent);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -119,6 +120,24 @@ export default function Navbar() {
                     {label}
                   </Button>
                 ))}
+                <Button
+                  onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+                  aria-label="Open command palette"
+                  sx={{
+                    ml: 1,
+                    minWidth: 0,
+                    px: 1,
+                    py: 0.25,
+                    fontSize: '0.72rem',
+                    fontWeight: 600,
+                    color: 'text.secondary',
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    borderRadius: 1.5,
+                    '&:hover': { color: 'primary.main', borderColor: 'primary.main', bgcolor: 'transparent' },
+                  }}
+                >
+                  {isMac ? '⌘K' : 'Ctrl K'}
+                </Button>
               </Box>
             )}
 
