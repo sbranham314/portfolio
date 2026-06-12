@@ -9,6 +9,7 @@ import Projects from './sections/Projects';
 import GithubActivity from './sections/GithubActivity';
 import Writing from './sections/Writing';
 import Certifications from './sections/Certifications';
+import LighthouseScores from './sections/LighthouseScores';
 import Contact from './sections/Contact';
 import AskAI from './components/AskAI';
 import CommandPalette from './components/CommandPalette';
@@ -28,6 +29,7 @@ export default function App() {
         <GithubActivity />
         <Writing />
         <Certifications />
+        <LighthouseScores />
         <Contact />
         </Box>
         <AskAI />
