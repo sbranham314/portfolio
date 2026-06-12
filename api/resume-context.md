@@ -42,5 +42,5 @@ Led the AWS modernization of DC's unemployment insurance platform during the COV
 
 ## Education & Certifications
 - BS, Computer Science — University of Maryland, College Park, 2014
-- Microsoft Azure: AZ-104 Administrator Associate (2026), AZ-900 Fundamentals, AZ-204 Developer Associate (Jun 2026), AZ-305 Solutions Architect Expert (in progress)
+- Microsoft Azure: AZ-104 Administrator Associate (earned 2026), AZ-900 Fundamentals, AZ-204 Developer Associate (earned Jun 2026), AZ-305 Solutions Architect Expert (in progress)
 - 15 active certifications, including CompTIA Security+ (CE), AWS Cloud Solutions Architect Specialization, DevOps on AWS, and Architecting Solutions on AWS
