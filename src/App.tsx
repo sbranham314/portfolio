@@ -8,6 +8,7 @@ import Experience from './sections/Experience';
 import Projects from './sections/Projects';
 import Certifications from './sections/Certifications';
 import Contact from './sections/Contact';
+import AskAI from './components/AskAI';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Projects />
         <Certifications />
         <Contact />
+        <AskAI />
       </Box>
     </ThemeProvider>
   );

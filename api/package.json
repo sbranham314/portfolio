@@ -1,0 +1,14 @@
+{
+  "name": "portfolio-api",
+  "version": "1.0.0",
+  "description": "Azure Functions API for samuelbranham.com — the Ask-AI assistant.",
+  "type": "module",
+  "main": "src/functions/*.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": ">=0.40.0",
+    "@azure/functions": "^4.0.0"
+  }
+}
