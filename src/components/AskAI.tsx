@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { keyframes } from '@emotion/react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -30,6 +32,29 @@ const SUGGESTED = [
 
 const MAX_LEN = 600;
 
+// Styling for the markdown Claude returns (bold, lists, links, inline code).
+const mdSx = {
+  fontSize: '0.875rem',
+  lineHeight: 1.6,
+  '& > :first-of-type': { mt: 0 },
+  '& > :last-child': { mb: 0 },
+  '& p': { m: 0, mb: 1 },
+  '& ul, & ol': { m: 0, mb: 1, pl: 2.5 },
+  '& li': { mb: 0.25 },
+  '& a': { color: ACCENT, textDecoration: 'underline' },
+  '& strong': { fontWeight: 700 },
+  '& em': { fontStyle: 'italic' },
+  '& code': {
+    fontFamily: 'monospace',
+    fontSize: '0.85em',
+    bgcolor: 'rgba(255,255,255,0.08)',
+    px: 0.5,
+    py: '1px',
+    borderRadius: '4px',
+  },
+  '& h1, & h2, & h3, & h4': { fontSize: '0.95rem', fontWeight: 700, m: 0, mb: 0.5, mt: 1 },
+} as const;
+
 const pulse = keyframes`
   0% { box-shadow: 0 8px 24px ${ACCENT}55, 0 0 0 0 ${ACCENT}66; }
   70% { box-shadow: 0 8px 24px ${ACCENT}55, 0 0 0 16px ${ACCENT}00; }
@@ -44,7 +69,9 @@ export default function AskAI() {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [typing, setTyping] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const typingRef = useRef<number | null>(null);
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
@@ -57,9 +84,14 @@ export default function AskAI() {
     return () => window.removeEventListener('open-ask-ai', handler);
   }, []);
 
+  // Stop the typewriter timer if the component unmounts mid-reveal.
+  useEffect(() => () => {
+    if (typingRef.current) window.clearInterval(typingRef.current);
+  }, []);
+
   async function send(text?: string) {
     const content = (text ?? input).trim();
-    if (!content || loading) return;
+    if (!content || loading || typing) return;
     setInput('');
     const history = messages.slice(-6);
     setMessages((m) => [...m, { role: 'user', content }]);
@@ -73,15 +105,38 @@ export default function AskAI() {
       const data = await res.json().catch(() => ({}));
       const reply =
         res.ok && data?.reply ? data.reply : data?.error || 'Something went wrong. Please try again.';
-      setMessages((m) => [...m, { role: 'assistant', content: reply }]);
-    } catch {
-      setMessages((m) => [
-        ...m,
-        { role: 'assistant', content: 'I could not reach the server. Please try again in a moment.' },
-      ]);
-    } finally {
       setLoading(false);
+      revealReply(reply);
+    } catch {
+      setLoading(false);
+      revealReply('I could not reach the server. Please try again in a moment.');
     }
+  }
+
+  // Reveal the reply progressively so it reads like it's being typed in real
+  // time. The backend returns the full reply at once — SWA managed functions
+  // don't support true token streaming — so this is a client-side effect.
+  function revealReply(full: string) {
+    if (typingRef.current) window.clearInterval(typingRef.current);
+    setTyping(true);
+    setMessages((m) => [...m, { role: 'assistant', content: '' }]);
+    const total = full.length;
+    const perTick = Math.max(1, Math.ceil(total / 60));
+    let i = 0;
+    typingRef.current = window.setInterval(() => {
+      i = Math.min(total, i + perTick);
+      const slice = full.slice(0, i);
+      setMessages((m) => {
+        const copy = m.slice();
+        copy[copy.length - 1] = { role: 'assistant', content: slice };
+        return copy;
+      });
+      if (i >= total) {
+        if (typingRef.current) window.clearInterval(typingRef.current);
+        typingRef.current = null;
+        setTyping(false);
+      }
+    }, 18);
   }
 
   const panelStyle: CSSProperties = {
@@ -216,13 +271,21 @@ export default function AskAI() {
                     borderRadius: 2,
                     bgcolor: m.role === 'user' ? ACCENT : 'rgba(255,255,255,0.05)',
                     color: m.role === 'user' ? '#0A0E1A' : 'text.primary',
-                    whiteSpace: 'pre-wrap',
+                    whiteSpace: m.role === 'user' ? 'pre-wrap' : 'normal',
                     wordBreak: 'break-word',
                   }}
                 >
-                  <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-                    {m.content}
-                  </Typography>
+                  {m.role === 'user' ? (
+                    <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
+                      {m.content}
+                    </Typography>
+                  ) : (
+                    <Box sx={mdSx}>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {typing && i === messages.length - 1 ? `${m.content}▍` : m.content}
+                      </ReactMarkdown>
+                    </Box>
+                  )}
                 </Box>
               ))}
 
@@ -262,7 +325,7 @@ export default function AskAI() {
               <IconButton
                 color="primary"
                 onClick={() => send()}
-                disabled={loading || !input.trim()}
+                disabled={loading || typing || !input.trim()}
                 aria-label="Send"
               >
                 <SendRoundedIcon />
