@@ -87,3 +87,30 @@ Both. He delivered the DES modernization on AWS (EC2, Lambda) and now works prim
 
 **What stands out about his side projects?**
 They are real, multi-tenant, production-grade SaaS with billing, multi-tenancy, email, and observability, and they are largely built by an AI-agent pipeline he engineered and operates rather than hand-coded. They show both product sense and the ability to run autonomous systems in production.
+
+**What is his experience with multi-tenant SaaS and tenant isolation?**
+Deep and recent. StayRecap enforces isolation at the database layer with PostgreSQL row-level security: every authenticated connection sets a session variable (app.current_tenant_id) so a query cannot cross tenant boundaries even if application code has a bug. RetroStoreManager enforces it at the application layer with a JWT-extracted company_id and a custom [RequirePermission] role-based-access attribute checked on every Azure Function. Both handle the full SaaS surface as well: Stripe billing with trial-to-paid state machines, transactional email, and per-tenant operator metrics.
+
+**Has he worked in regulated or high-reliability environments?**
+Yes. At Rockwell Collins he built C#/.NET applications for avionics and defense systems, a regulated, high-reliability domain with strict integration testing. At DC DES he integrated federal systems (IRS, SSA, US DOL) for compliance data exchange and eligibility verification, and he holds CompTIA Security+ (CE) among his certifications.
+
+**What is his database experience?**
+SQL Server and PostgreSQL in production, with Entity Framework Core and Dapper, relational data modeling, and row-level security for multi-tenancy. He has also built tooling that automatically repairs schema and migration drift (missing column, missing table, duplicate table, and model/snapshot drift) before it reaches users.
+
+**Can he operate systems in production, not just build them?**
+Yes, and he treats it as core to the job. At DES he led a 10-person support team handling production incidents and on-call across a legacy platform and its AWS modernization in parallel, keeping critical incidents to single digits per month at full population scale. On StayRecap he recovered from a multi-layer migration cascade that took the API down by pausing the build pipeline so its self-heal stopped competing, reconciling the schema in one shot, redeploying, and documenting the root cause so it could not recur unseen.
+
+**How does the autonomous build pipeline work, step by step?**
+An orchestrator reads the product spec, generates a backlog of epics and stories as issues, and dispatches AI agents across four repositories. Each story runs a closed loop: an agent develops the code and opens a pull request, another reviews and rebases it, the change deploys to a live environment with a database migration, an agent tests against the real endpoints, and the story merges to main. Failed tests file bugs back into the backlog, merge conflicts route to a rebase agent, and the orchestrator enforces operational guardrails: per-model spend caps, expiring-token handling, and a "done does not equal merged" guard so a story only closes when its code is actually in main.
+
+**What is his experience with cloud cost control?**
+He builds cost ceilings in by design. StayRecap holds report generation under $0.25 each by computing figures in code and letting the model only narrate them; the build pipeline enforces per-model spend caps; and the assistant on this site runs on a low-cost model behind rate limits and a hard monthly spend cap. He instruments token usage so cost and cache behavior are observable rather than guessed.
+
+**What kinds of integrations has he built?**
+REST and OpenAPI integrations across many systems: federal compliance systems (IRS, SSA, US DOL) at DES, point-of-sale and inventory systems at Victra via a deliberately POS-agnostic architecture, and third-party services such as Stripe (billing webhooks) and Azure Communication Services (email) in his SaaS products.
+
+**What is his educational background?**
+A BS in Computer Science from the University of Maryland, College Park (2014), plus 15 active certifications spanning Azure (AZ-104, AZ-900, AZ-204, with AZ-305 Solutions Architect Expert in progress), AWS architecture and DevOps specializations, and CompTIA Security+.
+
+## How Samuel Works
+Samuel favors systems that are trustworthy and cheap to run rather than flashy demos. With AI that means grounding model output in verified data, then wrapping it in guardrails: spend caps, prompt-injection hardening, rate limits, and self-healing so failures recover automatically. He designs for clean boundaries (the POS-agnostic decoupling at Victra, domain-driven design, row-level tenant isolation) and he operates what he builds, owning on-call, incident recovery, and root-cause documentation rather than handing it off. He is pragmatic about tooling: heavy use of Claude and agentic pipelines where they pay off, and plain hand-written code where they do not.
