@@ -24,6 +24,7 @@ import MailOutlineRoundedIcon from '@mui/icons-material/MailOutlineRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
 import { ACCENT } from '../theme';
 
 type Action = {
@@ -58,9 +59,11 @@ const DEFAULT_FOLLOWUPS = [
 
 const MAX_LEN = 600;
 const MAX_MESSAGE_LEN = 2000;
+const MAX_JD_LEN = 8000;
 const STORAGE_KEY = 'askai:messages';
 
 type ContactStatus = 'idle' | 'sending' | 'sent' | 'error';
+type JobFitStatus = 'idle' | 'loading' | 'done' | 'error';
 
 // Styling for the markdown Claude returns (bold, lists, links, inline code).
 const mdSx = {
@@ -150,9 +153,16 @@ export default function AskAI() {
   const [contactStatus, setContactStatus] = useState<ContactStatus>('idle');
   const [contactError, setContactError] = useState('');
 
+  // Job-fit state.
+  const [showJobFit, setShowJobFit] = useState(false);
+  const [jobDesc, setJobDesc] = useState('');
+  const [jobFitStatus, setJobFitStatus] = useState<JobFitStatus>('idle');
+  const [jobFitResult, setJobFitResult] = useState('');
+  const [jobFitError, setJobFitError] = useState('');
+
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
-  }, [messages, loading, open, showContact]);
+  }, [messages, loading, open, showContact, showJobFit]);
 
   // Let other parts of the site (e.g. the Projects card) open the chat.
   useEffect(() => {
@@ -318,9 +328,57 @@ export default function AskAI() {
     }
   }
 
+  function openJobFit() {
+    setJobFitError('');
+    if (jobFitStatus === 'error') setJobFitStatus('idle');
+    setShowJobFit(true);
+  }
+
+  function resetJobFit() {
+    setJobDesc('');
+    setJobFitResult('');
+    setJobFitError('');
+    setJobFitStatus('idle');
+  }
+
+  function backToChat() {
+    setShowContact(false);
+    setShowJobFit(false);
+  }
+
+  async function submitJobFit() {
+    if (jobFitStatus === 'loading') return;
+    const jd = jobDesc.trim();
+    if (jd.length < 40) {
+      setJobFitError('Please paste a full job description.');
+      return;
+    }
+    setJobFitError('');
+    setJobFitStatus('loading');
+    try {
+      const res = await fetch('/api/jobfit', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ jobDescription: jd }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.result) {
+        setJobFitResult(data.result);
+        setJobFitStatus('done');
+      } else {
+        setJobFitStatus('error');
+        setJobFitError(data?.error || 'Could not analyze this right now. Please try again.');
+      }
+    } catch {
+      setJobFitStatus('error');
+      setJobFitError('Could not reach the server. Please try again in a moment.');
+    }
+  }
+
+  const altView = showContact || showJobFit;
   const suggestions = followUps();
   const showSuggestions =
-    !showContact && !loading && !typing && messages.length > 0 && suggestions.length > 0;
+    !altView && !loading && !typing && messages.length > 0 && suggestions.length > 0;
 
   const panelStyle: CSSProperties = {
     position: 'fixed',
@@ -389,10 +447,10 @@ export default function AskAI() {
                 gap: 1.25,
               }}
             >
-              {showContact ? (
+              {altView ? (
                 <IconButton
                   size="small"
-                  onClick={() => setShowContact(false)}
+                  onClick={backToChat}
                   sx={{ flexShrink: 0 }}
                   aria-label="Back to chat"
                 >
@@ -416,19 +474,28 @@ export default function AskAI() {
               )}
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-                  {showContact ? 'Leave a message' : 'Ask about Samuel'}
+                  {showContact ? 'Leave a message' : showJobFit ? 'Job fit check' : 'Ask about Samuel'}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {showContact ? 'It goes straight to his inbox' : 'AI answers from his résumé'}
+                  {showContact
+                    ? 'It goes straight to his inbox'
+                    : showJobFit
+                      ? 'See how Samuel matches a role'
+                      : 'AI answers from his résumé'}
                 </Typography>
               </Box>
               <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-                {!showContact && (
+                {!altView && (
+                  <IconButton size="small" onClick={openJobFit} aria-label="Check a job description">
+                    <WorkOutlineRoundedIcon fontSize="small" />
+                  </IconButton>
+                )}
+                {!altView && (
                   <IconButton size="small" onClick={openContact} aria-label="Leave a message">
                     <MailOutlineRoundedIcon fontSize="small" />
                   </IconButton>
                 )}
-                {!showContact && messages.length > 0 && (
+                {!altView && messages.length > 0 && (
                   <IconButton size="small" onClick={clearChat} aria-label="Clear conversation">
                     <RestartAltRoundedIcon fontSize="small" />
                   </IconButton>
@@ -522,6 +589,62 @@ export default function AskAI() {
                   </Stack>
                 )}
               </Box>
+            ) : showJobFit ? (
+              /* Job-fit view */
+              <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
+                {jobFitStatus === 'done' ? (
+                  <Stack spacing={2}>
+                    <Box sx={mdSx}>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{jobFitResult}</ReactMarkdown>
+                    </Box>
+                    <Button variant="outlined" onClick={resetJobFit} sx={{ alignSelf: 'flex-start' }}>
+                      Check another role
+                    </Button>
+                  </Stack>
+                ) : (
+                  <Stack spacing={2}>
+                    <Typography variant="body2" color="text.secondary">
+                      Paste a job description and I'll map Samuel's experience to it: strong matches,
+                      transferable strengths, and any gaps.
+                    </Typography>
+                    <TextField
+                      placeholder="Paste the job description here…"
+                      size="small"
+                      fullWidth
+                      multiline
+                      minRows={8}
+                      value={jobDesc}
+                      onChange={(e) => setJobDesc(e.target.value.slice(0, MAX_JD_LEN))}
+                      disabled={jobFitStatus === 'loading'}
+                    />
+                    {jobFitStatus === 'loading' && (
+                      <Box component="span" sx={shimmerSx}>
+                        Analyzing fit…
+                      </Box>
+                    )}
+                    {jobFitError && (
+                      <Typography variant="caption" color="error">
+                        {jobFitError}
+                      </Typography>
+                    )}
+                    <Button
+                      variant="contained"
+                      onClick={submitJobFit}
+                      disabled={jobFitStatus === 'loading' || !jobDesc.trim()}
+                      startIcon={
+                        jobFitStatus === 'loading' ? (
+                          <CircularProgress size={16} thickness={5} color="inherit" />
+                        ) : (
+                          <AutoAwesomeRoundedIcon />
+                        )
+                      }
+                      sx={{ color: '#0A0E1A', fontWeight: 700, alignSelf: 'flex-start' }}
+                    >
+                      {jobFitStatus === 'loading' ? 'Analyzing…' : 'Analyze fit'}
+                    </Button>
+                  </Stack>
+                )}
+              </Box>
             ) : (
               <>
                 {/* Messages */}
@@ -539,6 +662,15 @@ export default function AskAI() {
                           <Chip key={q} label={q} variant="outlined" onClick={() => send(q)} sx={chipSx} />
                         ))}
                       </Stack>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<WorkOutlineRoundedIcon />}
+                        onClick={openJobFit}
+                        sx={{ mt: 1.5, borderColor: `${ACCENT}55`, color: ACCENT }}
+                      >
+                        Check a job description
+                      </Button>
                     </Box>
                   )}
 
