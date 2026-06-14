@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import {
   Box,
@@ -26,7 +26,12 @@ import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import { ACCENT } from '../theme';
 
-type Msg = { role: 'user' | 'assistant'; content: string };
+type Action = {
+  action: 'scroll_to_section' | 'open_case_study' | 'open_contact_form';
+  target?: string;
+  label: string;
+};
+type Msg = { role: 'user' | 'assistant'; content: string; actions?: Action[] };
 
 const SUGGESTED = [
   'Give me a 30-second summary of Samuel.',
@@ -188,8 +193,10 @@ export default function AskAI() {
       const data = await res.json().catch(() => ({}));
       const reply =
         res.ok && data?.reply ? data.reply : data?.error || 'Something went wrong. Please try again.';
+      const actions: Action[] | undefined =
+        res.ok && Array.isArray(data?.actions) ? data.actions : undefined;
       setLoading(false);
-      revealReply(reply);
+      revealReply(reply, actions);
     } catch {
       setLoading(false);
       revealReply('I could not reach the server. Please try again in a moment.');
@@ -199,10 +206,10 @@ export default function AskAI() {
   // Reveal the reply progressively so it reads like it's being typed in real
   // time. The backend returns the full reply at once — SWA managed functions
   // don't support true token streaming — so this is a client-side effect.
-  function revealReply(full: string) {
+  function revealReply(full: string, actions?: Action[]) {
     if (typingRef.current) window.clearInterval(typingRef.current);
     setTyping(true);
-    setMessages((m) => [...m, { role: 'assistant', content: '' }]);
+    setMessages((m) => [...m, { role: 'assistant', content: '', actions }]);
     const total = full.length;
     const perTick = Math.max(2, Math.ceil(total / 45));
     let i = 0;
@@ -211,7 +218,7 @@ export default function AskAI() {
       const slice = full.slice(0, i);
       setMessages((m) => {
         const copy = m.slice();
-        copy[copy.length - 1] = { role: 'assistant', content: slice };
+        copy[copy.length - 1] = { ...copy[copy.length - 1], content: slice };
         return copy;
       });
       if (i >= total) {
@@ -250,6 +257,29 @@ export default function AskAI() {
     setContactStatus('idle');
     setContactError('');
     setShowContact(true);
+  }
+
+  // Run a navigation action the assistant offered. On mobile the chat is
+  // full-screen, so for page-driving actions we first minimize the chat (back
+  // to the floating button) so the result is visible; desktop acts in place.
+  function executeAction(a: Action) {
+    if (a.action === 'open_contact_form') {
+      openContact();
+      return;
+    }
+    const run = () => {
+      if (a.action === 'scroll_to_section' && a.target) {
+        document.getElementById(a.target)?.scrollIntoView({ behavior: 'smooth' });
+      } else if (a.action === 'open_case_study') {
+        window.dispatchEvent(new CustomEvent('open-case-study', { detail: a.target }));
+      }
+    };
+    if (isMobile) {
+      setOpen(false);
+      window.setTimeout(run, 280);
+    } else {
+      run();
+    }
   }
 
   async function submitContact() {
@@ -513,32 +543,59 @@ export default function AskAI() {
                   )}
 
                   {messages.map((m, i) => (
-                    <Box
-                      key={i}
-                      sx={{
-                        alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
-                        maxWidth: '85%',
-                        px: 1.5,
-                        py: 1,
-                        borderRadius: 2,
-                        bgcolor: m.role === 'user' ? ACCENT : 'rgba(255,255,255,0.05)',
-                        color: m.role === 'user' ? '#0A0E1A' : 'text.primary',
-                        whiteSpace: m.role === 'user' ? 'pre-wrap' : 'normal',
-                        wordBreak: 'break-word',
-                      }}
-                    >
-                      {m.role === 'user' ? (
-                        <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-                          {m.content}
-                        </Typography>
-                      ) : (
-                        <Box sx={mdSx}>
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {typing && i === messages.length - 1 ? `${m.content}▍` : m.content}
-                          </ReactMarkdown>
-                        </Box>
-                      )}
-                    </Box>
+                    <Fragment key={i}>
+                      <Box
+                        sx={{
+                          alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                          maxWidth: '85%',
+                          px: 1.5,
+                          py: 1,
+                          borderRadius: 2,
+                          bgcolor: m.role === 'user' ? ACCENT : 'rgba(255,255,255,0.05)',
+                          color: m.role === 'user' ? '#0A0E1A' : 'text.primary',
+                          whiteSpace: m.role === 'user' ? 'pre-wrap' : 'normal',
+                          wordBreak: 'break-word',
+                        }}
+                      >
+                        {m.role === 'user' ? (
+                          <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
+                            {m.content}
+                          </Typography>
+                        ) : (
+                          <Box sx={mdSx}>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {typing && i === messages.length - 1 ? `${m.content}▍` : m.content}
+                            </ReactMarkdown>
+                          </Box>
+                        )}
+                      </Box>
+                      {m.role === 'assistant' &&
+                        m.actions &&
+                        m.actions.length > 0 &&
+                        !(typing && i === messages.length - 1) && (
+                          <Stack spacing={0.75} sx={{ alignSelf: 'flex-start', maxWidth: '90%' }}>
+                            {m.actions.map((a, j) => (
+                              <Chip
+                                key={j}
+                                label={a.label}
+                                icon={<AutoAwesomeRoundedIcon />}
+                                onClick={() => executeAction(a)}
+                                sx={{
+                                  alignSelf: 'flex-start',
+                                  height: 'auto',
+                                  py: 0.5,
+                                  bgcolor: `${ACCENT}14`,
+                                  color: ACCENT,
+                                  border: `1px solid ${ACCENT}55`,
+                                  '& .MuiChip-icon': { color: ACCENT },
+                                  '& .MuiChip-label': { whiteSpace: 'normal' },
+                                  '&:hover': { bgcolor: `${ACCENT}22` },
+                                }}
+                              />
+                            ))}
+                          </Stack>
+                        )}
+                    </Fragment>
                   ))}
 
                   {loading && (

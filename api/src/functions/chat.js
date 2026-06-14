@@ -34,10 +34,63 @@ Rules:
 - Answer the SPECIFIC question asked and stay tightly focused on it. Do not pad the answer with tangential or unrelated accomplishments. For example, when asked about Azure or cloud work, do not bring up AI-assisted development, productivity gains, Scrum/leadership, or unrelated projects unless the visitor specifically asks about those. Mention a project only if it directly answers the question.
 - Be concise (1–2 short paragraphs), professional, and factual. Refer to Samuel in the third person.
 - Write in plain, natural prose. Do NOT use em-dashes (—); use commas, periods, or parentheses instead.
+- You may offer the visitor ONE button to navigate this site via the navigate_site tool, when seeing a specific section or the StayRecap case study would genuinely help your answer (for example, "open the case study", "see his certifications", or "message Samuel"). Always give your full text answer too; the button is in addition to it, never instead of it. Do not offer a button for small talk or when it would not add value.
 
 --- SAMUEL BRANHAM PROFILE ---
 ${RESUME_CONTEXT}
 --- END PROFILE ---`;
+
+// Allowed scroll targets (must match section ids in the site).
+const NAV_SECTIONS = new Set(['projects', 'experience', 'skills', 'certifications', 'writing', 'about', 'contact', 'github']);
+
+// A single client-side "navigate this site" tool the model can optionally call.
+const NAV_TOOL = {
+  name: 'navigate_site',
+  description:
+    'Offer the visitor a single button to jump to a relevant part of this portfolio site. Use it only when seeing a specific section or the StayRecap case study would genuinely help, and always answer in text as well.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      action: {
+        type: 'string',
+        enum: ['scroll_to_section', 'open_case_study', 'open_contact_form'],
+        description:
+          'scroll_to_section jumps to a page section; open_case_study opens the StayRecap case-study modal; open_contact_form opens a form to message Samuel.',
+      },
+      target: {
+        type: 'string',
+        description:
+          'For scroll_to_section: one of projects, experience, skills, certifications, writing, about, contact, github. For open_case_study: stayrecap. Omit for open_contact_form.',
+      },
+      label: {
+        type: 'string',
+        description: 'Short button text, e.g. "Open the StayRecap case study" or "See his certifications".',
+      },
+    },
+    required: ['action', 'label'],
+  },
+};
+
+// Pull at most one validated navigation action out of the model's tool calls.
+// Everything is checked against an allowlist so the model can't emit a bad target.
+function extractActions(content) {
+  const actions = [];
+  for (const block of content) {
+    if (block.type !== 'tool_use' || block.name !== 'navigate_site') continue;
+    const a = block.input || {};
+    const label = typeof a.label === 'string' ? a.label.trim().slice(0, 60) : '';
+    if (!label) continue;
+    if (a.action === 'open_contact_form') {
+      actions.push({ action: 'open_contact_form', label });
+    } else if (a.action === 'scroll_to_section' && NAV_SECTIONS.has(a.target)) {
+      actions.push({ action: 'scroll_to_section', target: a.target, label });
+    } else if (a.action === 'open_case_study' && a.target === 'stayrecap') {
+      actions.push({ action: 'open_case_study', target: 'stayrecap', label });
+    }
+    if (actions.length >= 1) break;
+  }
+  return actions;
+}
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -223,6 +276,7 @@ app.http('chat', {
       const response = await client.messages.create({
         model: MODEL,
         max_tokens: MAX_TOKENS,
+        tools: [NAV_TOOL],
         system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
         messages,
       });
@@ -232,6 +286,8 @@ app.http('chat', {
         .map((block) => block.text)
         .join('')
         .trim();
+
+      const actions = extractActions(response.content);
 
       try {
         logQuestion(message, reply, ip, response.usage);
@@ -243,6 +299,7 @@ app.http('chat', {
         status: 200,
         jsonBody: {
           reply: reply || "I'm not sure how to answer that — try asking about Samuel's experience, skills, or projects.",
+          ...(actions.length ? { actions } : {}),
         },
       };
     } catch (err) {

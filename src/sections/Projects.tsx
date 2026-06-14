@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Container, Typography, Grid, Paper, Chip, Button, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -60,6 +60,14 @@ const PROJECTS: Project[] = [
 
 export default function Projects() {
   const [caseStudyOpen, setCaseStudyOpen] = useState(false);
+
+  // Let the AI assistant open the StayRecap case study via a navigation action.
+  useEffect(() => {
+    const handler = () => setCaseStudyOpen(true);
+    window.addEventListener('open-case-study', handler);
+    return () => window.removeEventListener('open-case-study', handler);
+  }, []);
+
   return (
     <Box
       id="projects"
