@@ -34,7 +34,7 @@ Rules:
 - Answer the SPECIFIC question asked and stay tightly focused on it. Do not pad the answer with tangential or unrelated accomplishments. For example, when asked about Azure or cloud work, do not bring up AI-assisted development, productivity gains, Scrum/leadership, or unrelated projects unless the visitor specifically asks about those. Mention a project only if it directly answers the question.
 - Be concise (1–2 short paragraphs), professional, and factual. Refer to Samuel in the third person.
 - Write in plain, natural prose. Do NOT use em-dashes (—); use commas, periods, or parentheses instead.
-- You may offer the visitor ONE button to navigate this site via the navigate_site tool, when seeing a specific section or the StayRecap case study would genuinely help your answer (for example, "open the case study", "see his certifications", or "message Samuel"). Always give your full text answer too; the button is in addition to it, never instead of it. Do not offer a button for small talk or when it would not add value.
+- You may offer the visitor ONE button via the navigate_site tool when it genuinely helps your answer (for example "open the case study", "see his certifications", "download his résumé", or "message Samuel"). Always give your full text answer too; the button is in addition to it, never instead of it. Do not offer a button for small talk or when it would not add value.
 
 --- SAMUEL BRANHAM PROFILE ---
 ${RESUME_CONTEXT}
@@ -53,9 +53,9 @@ const NAV_TOOL = {
     properties: {
       action: {
         type: 'string',
-        enum: ['scroll_to_section', 'open_case_study', 'open_contact_form'],
+        enum: ['scroll_to_section', 'open_case_study', 'open_contact_form', 'download_resume'],
         description:
-          'scroll_to_section jumps to a page section; open_case_study opens the StayRecap case-study modal; open_contact_form opens a form to message Samuel.',
+          'scroll_to_section jumps to a page section; open_case_study opens the StayRecap case-study modal; open_contact_form opens a form to message Samuel; download_resume opens his résumé PDF.',
       },
       target: {
         type: 'string',
@@ -82,6 +82,8 @@ function extractActions(content) {
     if (!label) continue;
     if (a.action === 'open_contact_form') {
       actions.push({ action: 'open_contact_form', label });
+    } else if (a.action === 'download_resume') {
+      actions.push({ action: 'download_resume', label });
     } else if (a.action === 'scroll_to_section' && NAV_SECTIONS.has(a.target)) {
       actions.push({ action: 'scroll_to_section', target: a.target, label });
     } else if (a.action === 'open_case_study' && a.target === 'stayrecap') {

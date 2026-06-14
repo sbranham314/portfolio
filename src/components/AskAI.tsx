@@ -28,7 +28,7 @@ import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
 import { ACCENT } from '../theme';
 
 type Action = {
-  action: 'scroll_to_section' | 'open_case_study' | 'open_contact_form';
+  action: 'scroll_to_section' | 'open_case_study' | 'open_contact_form' | 'download_resume';
   target?: string;
   label: string;
 };
@@ -275,6 +275,10 @@ export default function AskAI() {
   function executeAction(a: Action) {
     if (a.action === 'open_contact_form') {
       openContact();
+      return;
+    }
+    if (a.action === 'download_resume') {
+      window.open('/resume.pdf', '_blank', 'noopener,noreferrer');
       return;
     }
     const run = () => {
