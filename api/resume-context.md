@@ -45,3 +45,45 @@ Led the AWS modernization of DC's unemployment insurance platform during the COV
 - BS, Computer Science — University of Maryland, College Park, 2014
 - Microsoft Azure: AZ-104 Administrator Associate (earned 2026), AZ-900 Fundamentals, AZ-204 Developer Associate (earned Jun 2026), AZ-305 Solutions Architect Expert (in progress)
 - 15 active certifications, including CompTIA Security+ (CE), AWS Cloud Solutions Architect Specialization, DevOps on AWS, and Architecting Solutions on AWS
+
+## Selected Projects
+Production-grade SaaS Samuel builds and operates on his own time. The throughline: real multi-tenant products (billing, multi-tenancy, email, observability) built largely by an AI-agent pipeline he engineered, with LLM output kept trustworthy and cost-controlled.
+
+### StayRecap (AI SaaS; MVP complete)
+A multi-tenant SaaS that turns messy short-term-rental data (property-management exports, expense CSVs, guest reviews) into polished, owner-ready quarterly PDF reports in under two minutes. The figures are computed deterministically in code and the language model is given only verified numbers to narrate, so a report is fast and trustworthy and cannot hallucinate a revenue figure. Report generation is held under $0.25 per report. MVP is feature-complete: auth, CSV ingestion, AI report generation, Stripe billing, transactional email, invite codes, and operator metrics. Stack: React/TypeScript on Azure Static Web Apps, .NET 9 Azure Functions, PostgreSQL with row-level multi-tenancy (a per-connection session variable so a query can never cross tenant boundaries even if app code has a bug), Blob Storage, Claude, Azure Communication Services, Stripe, traced through Application Insights.
+
+### Autonomous multi-agent build pipeline
+The engineering system that builds and operates both StayRecap and RetroStoreManager. Instead of hand-coding story by story, an orchestrator reads the product spec, generates an epic and story backlog as issues, and dispatches AI coding agents across four coordinated repositories. Each story runs through a closed, self-healing loop: develop (an agent writes the code and opens a PR), review (an agent reviews and rebases), deploy (live environment plus database migration), test (an agent calls the real endpoints), then merge to main. Failed tests file bugs that re-enter the backlog and conflicts route to a rebase agent. It handles real operations: per-model spend caps, expiring agent tokens, a "done does not equal merged" guard so a story only closes when its code is actually in main, and an idempotent deploy remediation layer that repairs schema and migration drift before it reaches users. Samuel also operates it in production, for example recovering from a migration cascade that took an API down by pausing the pipeline, reconciling the schema in one shot, redeploying, and documenting the root cause.
+
+### RetroStoreManager (multi-tenant SaaS; in development)
+A multi-tenant SaaS for retro game and trading-card-game store owners. The standout piece: Claude vision auto-identifies games from customer trade-in photos (title, platform, condition) and pre-populates inventory, collapsing the highest-friction workflow into seconds. Tenant isolation is enforced via a JWT-extracted company_id and a custom [RequirePermission] role-based-access attribute checked on every Azure Function, with webhook-driven Stripe billing and a trial-to-paid state machine. Built and operated by the same autonomous multi-agent pipeline across four coordinated repos. Stack: React, TypeScript, Material UI, .NET 8, Azure Functions, PostgreSQL, Claude (vision), Stripe, GitHub Actions.
+
+### AI Résumé Assistant (this site; live)
+The "Ask AI about me" assistant on this site (the one answering now). Answers are grounded strictly in Samuel's professional profile, and it declines off-topic or out-of-scope questions. Built as a serverless Azure Function that proxies Claude Haiku 4.5 so the API key stays server-side, with a prompt hardened against injection and topic drift, input caps, per-IP and global daily rate limits, and a hard monthly spend ceiling. It deploys alongside the site through the same GitHub Actions pipeline.
+
+## Writing
+Samuel writes about software engineering, focused on building real products with AI.
+- "What I Learned Building Software with Autonomous AI Agents" (June 2026): notes from building two SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code, covering what works, what does not, and what it changes about the job.
+
+## Frequently Asked
+
+**What does Samuel specialize in?**
+Full-stack engineering and architecture on C#/.NET and React/Angular over Azure and AWS, with deep experience in multi-tenant SaaS, REST/OpenAPI integrations, and AI-assisted and AI-agent-driven development. He also leads as a Scrum Master and technical lead.
+
+**What is his most significant professional impact?**
+Owning end-to-end delivery of the DC unemployment insurance modernization during the COVID-19 surge, when daily claim volume jumped 10x overnight, which enabled tens of millions in benefit payments. At Victra he is lead engineer on systems that drive commission payouts for 6,600+ employees and process millions of sales transactions.
+
+**What is he building with AI?**
+Two SaaS products, StayRecap and RetroStoreManager, built and operated by an autonomous multi-agent CI/CD pipeline he designed, plus the AI assistant on this site. At work he established team-wide AI-assisted development patterns using Claude, reporting 3–5x productivity gains on boilerplate, refactors, and test scaffolding.
+
+**How does he approach AI in real engineering?**
+He grounds model output in verified data (for example, StayRecap computes figures in code and lets the model only narrate them, so it cannot hallucinate numbers) and builds guardrails: spend caps, prompt-injection hardening, rate limits, and operational self-healing. The emphasis is on shipping trustworthy, cost-controlled systems rather than demos.
+
+**What is his leadership experience?**
+Scrum Master and lead engineer for an 8-person team at Victra, and previously lead of a 10-person support team at DES handling production incidents and on-call across legacy and modernized platforms. He has mentored several engineers into mid and senior promotions and set code-review and engineering standards.
+
+**Azure or AWS?**
+Both. He delivered the DES modernization on AWS (EC2, Lambda) and now works primarily on Azure (Functions, API Management, App Service, Storage, DevOps). He is AZ-104 certified with AZ-305 Solutions Architect Expert in progress.
+
+**What stands out about his side projects?**
+They are real, multi-tenant, production-grade SaaS with billing, multi-tenancy, email, and observability, and they are largely built by an AI-agent pipeline he engineered and operates rather than hand-coded. They show both product sense and the ability to run autonomous systems in production.
