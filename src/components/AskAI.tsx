@@ -304,6 +304,9 @@ export default function AskAI() {
           px: 2.5,
           boxShadow: `0 8px 24px ${ACCENT}55`,
           ...(open ? {} : { animation: `${pulse} 2.4s ease-out infinite` }),
+          // On mobile the full-height panel has its own header close button; the
+          // floating button would overlap the send button, so hide it when open.
+          ...(isMobile && open ? { display: 'none' } : {}),
         }}
       >
         {open ? (
