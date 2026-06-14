@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { createHash } from 'node:crypto';
 
 // --- Load the résumé context once per cold start ---
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -38,6 +39,59 @@ ${RESUME_CONTEXT}
 --- END PROFILE ---`;
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// --- Optional question logging via Application Insights ---
+// PII-safe: logs the question (with emails/phone numbers scrubbed) and a salted
+// IP hash only — never the raw IP, the model's reply, or any contact details.
+// Active only when APPLICATIONINSIGHTS_CONNECTION_STRING is configured.
+const IP_HASH_SALT = process.env.IP_HASH_SALT || 'portfolio-askai';
+
+function parseAppInsights(conn) {
+  if (!conn) return null;
+  const parts = {};
+  for (const kv of conn.split(';')) {
+    const idx = kv.indexOf('=');
+    if (idx > 0) parts[kv.slice(0, idx)] = kv.slice(idx + 1);
+  }
+  if (!parts.InstrumentationKey) return null;
+  const endpoint = (parts.IngestionEndpoint || 'https://dc.services.visualstudio.com').replace(/\/+$/, '');
+  return { iKey: parts.InstrumentationKey, trackUrl: `${endpoint}/v2/track` };
+}
+const appInsights = parseAppInsights(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING);
+
+function scrubPii(text) {
+  return text
+    .replace(/[^\s@]+@[^\s@]+\.[^\s@]+/g, '[email]')
+    .replace(/\+?\d[\d\s().-]{7,}\d/g, '[phone]');
+}
+
+// Fire-and-forget — logging must never affect the chat response.
+function logQuestion(message, reply, ip) {
+  if (!appInsights) return;
+  const envelope = {
+    name: 'Microsoft.ApplicationInsights.Event',
+    time: new Date().toISOString(),
+    iKey: appInsights.iKey,
+    tags: { 'ai.cloud.role': 'portfolio-askai' },
+    data: {
+      baseType: 'EventData',
+      baseData: {
+        ver: 2,
+        name: 'chat_question',
+        properties: {
+          question: scrubPii(message.slice(0, MAX_MESSAGE_LEN)),
+          ipHash: createHash('sha256').update(`${IP_HASH_SALT}:${ip}`).digest('hex').slice(0, 16),
+        },
+        measurements: { questionLength: message.length, replyLength: reply.length },
+      },
+    },
+  };
+  fetch(appInsights.trackUrl, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(envelope),
+  }).catch(() => {});
+}
 
 // --- In-memory rate-limit state ---
 let currentDay = todayStamp();
@@ -170,6 +224,12 @@ app.http('chat', {
         .map((block) => block.text)
         .join('')
         .trim();
+
+      try {
+        logQuestion(message, reply, ip);
+      } catch {
+        /* never let logging break the chat */
+      }
 
       return {
         status: 200,
