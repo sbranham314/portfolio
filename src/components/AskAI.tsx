@@ -94,6 +94,24 @@ const pulse = keyframes`
   100% { box-shadow: 0 8px 24px ${ACCENT}55, 0 0 0 0 ${ACCENT}00; }
 `;
 
+// Subtle "Thinking…" shimmer shown while a reply is in flight.
+const shimmer = keyframes`
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+`;
+const shimmerSx = {
+  display: 'inline-block',
+  fontSize: '0.875rem',
+  fontWeight: 500,
+  background:
+    'linear-gradient(90deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0.22) 100%)',
+  backgroundSize: '200% 100%',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+  animation: `${shimmer} 1.6s linear infinite`,
+} as const;
+
 function loadMessages(): Msg[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -186,7 +204,7 @@ export default function AskAI() {
     setTyping(true);
     setMessages((m) => [...m, { role: 'assistant', content: '' }]);
     const total = full.length;
-    const perTick = Math.max(1, Math.ceil(total / 60));
+    const perTick = Math.max(2, Math.ceil(total / 45));
     let i = 0;
     typingRef.current = window.setInterval(() => {
       i = Math.min(total, i + perTick);
@@ -201,7 +219,7 @@ export default function AskAI() {
         typingRef.current = null;
         setTyping(false);
       }
-    }, 18);
+    }, 12);
   }
 
   function followUps(): string[] {
@@ -524,8 +542,10 @@ export default function AskAI() {
                   ))}
 
                   {loading && (
-                    <Box sx={{ alignSelf: 'flex-start', px: 1.5, py: 1.25 }}>
-                      <CircularProgress size={16} thickness={5} />
+                    <Box sx={{ alignSelf: 'flex-start', px: 1.5, py: 1 }}>
+                      <Box component="span" sx={shimmerSx}>
+                        Thinking…
+                      </Box>
                     </Box>
                   )}
 
