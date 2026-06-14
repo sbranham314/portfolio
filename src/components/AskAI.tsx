@@ -57,6 +57,84 @@ const DEFAULT_FOLLOWUPS = [
   'Give me a 30-second summary of Samuel.',
 ];
 
+// Contextual opener: tailor the greeting + suggested questions to the section
+// the visitor is viewing when they open the chat.
+const SECTION_IDS = ['about', 'experience', 'projects', 'skills', 'certifications', 'writing', 'contact'];
+const OPENERS: Record<string, { greeting: string; suggestions: string[] }> = {
+  projects: {
+    greeting: 'Checking out his projects? Ask me how any of them work.',
+    suggestions: [
+      'How does the autonomous build pipeline work?',
+      'Tell me about RetroStoreManager.',
+      'What is StayRecap and how is it built?',
+      'What is he building with AI?',
+    ],
+  },
+  experience: {
+    greeting: 'Want to dig into his experience? Ask away.',
+    suggestions: [
+      'What does he do at Victra?',
+      'Tell me about his work at DC DES.',
+      'What is his most significant impact?',
+      'How many years has he been engineering?',
+    ],
+  },
+  skills: {
+    greeting: 'Curious about his skills? Ask me anything technical.',
+    suggestions: [
+      'What is his strongest tech stack?',
+      'What is his experience with Azure and the cloud?',
+      'What is his database experience?',
+      'What is he building with AI?',
+    ],
+  },
+  certifications: {
+    greeting: 'Looking at his certifications? Ask me about them.',
+    suggestions: [
+      'What certifications does he hold?',
+      'What is his Azure certification status?',
+      'What cloud experience does he have?',
+    ],
+  },
+  writing: {
+    greeting: 'Interested in his writing? Ask me about it.',
+    suggestions: [
+      'What does he write about?',
+      'What did he learn building software with AI agents?',
+      'What is he building with AI?',
+    ],
+  },
+  contact: {
+    greeting: 'Want to reach Samuel? You can leave him a message right here.',
+    suggestions: [
+      'How can I get in touch with Samuel?',
+      'Can I get a copy of his resume?',
+      'Give me a 30-second summary of Samuel.',
+    ],
+  },
+};
+
+// Which section's midpoint is closest to the viewport center right now.
+function detectSection(): string | null {
+  if (typeof document === 'undefined') return null;
+  const mid = window.innerHeight / 2;
+  let best: string | null = null;
+  let bestDist = Infinity;
+  for (const id of SECTION_IDS) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    const r = el.getBoundingClientRect();
+    if (r.top <= mid && r.bottom >= mid) return id;
+    const center = (r.top + r.bottom) / 2;
+    const dist = Math.abs(center - mid);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = id;
+    }
+  }
+  return best;
+}
+
 const MAX_LEN = 600;
 const MAX_MESSAGE_LEN = 2000;
 const MAX_JD_LEN = 8000;
@@ -137,6 +215,7 @@ export default function AskAI() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [open, setOpen] = useState(false);
+  const [section, setSection] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>(loadMessages);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -175,6 +254,11 @@ export default function AskAI() {
   useEffect(() => () => {
     if (typingRef.current) window.clearInterval(typingRef.current);
   }, []);
+
+  // On open, note which section the visitor is on for a contextual greeting.
+  useEffect(() => {
+    if (open) setSection(detectSection());
+  }, [open]);
 
   // Persist the conversation so reopening the widget keeps context. Skip while
   // the typewriter is running to avoid writing on every animation tick.
@@ -380,6 +464,9 @@ export default function AskAI() {
   }
 
   const altView = showContact || showJobFit;
+  const opener = (section && OPENERS[section]) || null;
+  const greeting = opener?.greeting ?? "Hi! Ask me anything about Samuel's experience, skills, or projects.";
+  const openerSuggestions = opener?.suggestions ?? SUGGESTED;
   const suggestions = followUps();
   const showSuggestions =
     !altView && !loading && !typing && messages.length > 0 && suggestions.length > 0;
@@ -659,10 +746,10 @@ export default function AskAI() {
                   {messages.length === 0 && (
                     <Box>
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                        Hi! Ask me anything about Samuel's experience, skills, or projects.
+                        {greeting}
                       </Typography>
                       <Stack spacing={1}>
-                        {SUGGESTED.map((q) => (
+                        {openerSuggestions.map((q) => (
                           <Chip key={q} label={q} variant="outlined" onClick={() => send(q)} sx={chipSx} />
                         ))}
                       </Stack>
