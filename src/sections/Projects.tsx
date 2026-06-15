@@ -6,6 +6,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import StrataCaseStudy from './StrataCaseStudy';
+import RetroCaseStudy from './RetroCaseStudy';
 
 type Project = {
   title: string;
@@ -16,7 +17,7 @@ type Project = {
   statusColor: string;
   links: { github?: string; demo?: string };
   featured: boolean;
-  caseStudy?: boolean;
+  caseStudy?: 'stayrecap' | 'retro';
   tryChat?: boolean;
 };
 
@@ -31,6 +32,7 @@ const PROJECTS: Project[] = [
     statusColor: '#FF8A65',
     links: { github: 'https://github.com/retrostoremanager' },
     featured: true,
+    caseStudy: 'retro',
   },
   {
     title: 'StayRecap',
@@ -42,7 +44,7 @@ const PROJECTS: Project[] = [
     statusColor: '#66BB6A',
     links: { github: 'https://github.com/strata-reports-ai/orchestrator-strata-reports' },
     featured: true,
-    caseStudy: true,
+    caseStudy: 'stayrecap',
   },
   {
     title: 'AI Résumé Assistant',
@@ -59,11 +61,11 @@ const PROJECTS: Project[] = [
 ];
 
 export default function Projects() {
-  const [caseStudyOpen, setCaseStudyOpen] = useState(false);
+  const [openCase, setOpenCase] = useState<'stayrecap' | 'retro' | null>(null);
 
   // Let the AI assistant open the StayRecap case study via a navigation action.
   useEffect(() => {
-    const handler = () => setCaseStudyOpen(true);
+    const handler = () => setOpenCase('stayrecap');
     window.addEventListener('open-case-study', handler);
     return () => window.removeEventListener('open-case-study', handler);
   }, []);
@@ -200,7 +202,7 @@ export default function Projects() {
                         variant="contained"
                         size="small"
                         startIcon={<ArticleOutlinedIcon fontSize="small" />}
-                        onClick={() => setCaseStudyOpen(true)}
+                        onClick={() => project.caseStudy && setOpenCase(project.caseStudy)}
                         sx={{
                           bgcolor: 'rgba(0,212,255,0.12)',
                           color: 'primary.main',
@@ -254,7 +256,8 @@ export default function Projects() {
         </Grid>
       </Container>
 
-      <StrataCaseStudy open={caseStudyOpen} onClose={() => setCaseStudyOpen(false)} />
+      <StrataCaseStudy open={openCase === 'stayrecap'} onClose={() => setOpenCase(null)} />
+      <RetroCaseStudy open={openCase === 'retro'} onClose={() => setOpenCase(null)} />
     </Box>
   );
 }

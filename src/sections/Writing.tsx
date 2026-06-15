@@ -13,6 +13,15 @@ type Post = {
 
 const POSTS: Post[] = [
   {
+    title: 'What I Learned Building an AI Assistant for My Own Portfolio',
+    date: 'June 14, 2026',
+    readingTime: '5 min read',
+    excerpt:
+      "Grounding an AI in my résumé so it can't invent a job I never had, defending it from the open internet, the streaming decision, and what prompt caching actually costs.",
+    href: '/writing/building-my-portfolio-ai-assistant.html',
+    tags: ['AI', 'Engineering'],
+  },
+  {
     title: 'What I Learned Building Software with Autonomous AI Agents',
     date: 'June 12, 2026',
     readingTime: '6 min read',
