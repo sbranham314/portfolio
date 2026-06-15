@@ -291,6 +291,16 @@ export default function AskAI() {
         res.ok && Array.isArray(data?.actions) ? data.actions : undefined;
       setLoading(false);
       revealReply(reply, actions);
+      // Desktop: auto-scroll to a referenced section (the panel sits in the
+      // corner, so the page scrolls visibly behind it). Mobile keeps the button.
+      if (!isMobile && actions) {
+        const scrollTo = actions.find((a) => a.action === 'scroll_to_section' && a.target);
+        if (scrollTo?.target) {
+          window.setTimeout(() => {
+            document.getElementById(scrollTo.target as string)?.scrollIntoView({ behavior: 'smooth' });
+          }, 450);
+        }
+      }
     } catch {
       setLoading(false);
       revealReply('I could not reach the server. Please try again in a moment.');
@@ -793,31 +803,39 @@ export default function AskAI() {
                         )}
                       </Box>
                       {m.role === 'assistant' &&
-                        m.actions &&
-                        m.actions.length > 0 &&
-                        !(typing && i === messages.length - 1) && (
-                          <Stack spacing={0.75} sx={{ alignSelf: 'flex-start', maxWidth: '90%' }}>
-                            {m.actions.map((a, j) => (
-                              <Chip
-                                key={j}
-                                label={a.label}
-                                icon={<AutoAwesomeRoundedIcon />}
-                                onClick={() => executeAction(a)}
-                                sx={{
-                                  alignSelf: 'flex-start',
-                                  height: 'auto',
-                                  py: 0.5,
-                                  bgcolor: `${ACCENT}14`,
-                                  color: ACCENT,
-                                  border: `1px solid ${ACCENT}55`,
-                                  '& .MuiChip-icon': { color: ACCENT },
-                                  '& .MuiChip-label': { whiteSpace: 'normal' },
-                                  '&:hover': { bgcolor: `${ACCENT}22` },
-                                }}
-                              />
-                            ))}
-                          </Stack>
-                        )}
+                        !(typing && i === messages.length - 1) &&
+                        (() => {
+                          // On desktop, scroll_to_section auto-fires, so don't
+                          // also show its button; other actions stay as buttons.
+                          const all = m.actions ?? [];
+                          const acts = isMobile
+                            ? all
+                            : all.filter((a) => a.action !== 'scroll_to_section');
+                          if (acts.length === 0) return null;
+                          return (
+                            <Stack spacing={0.75} sx={{ alignSelf: 'flex-start', maxWidth: '90%' }}>
+                              {acts.map((a, j) => (
+                                <Chip
+                                  key={j}
+                                  label={a.label}
+                                  icon={<AutoAwesomeRoundedIcon />}
+                                  onClick={() => executeAction(a)}
+                                  sx={{
+                                    alignSelf: 'flex-start',
+                                    height: 'auto',
+                                    py: 0.5,
+                                    bgcolor: `${ACCENT}14`,
+                                    color: ACCENT,
+                                    border: `1px solid ${ACCENT}55`,
+                                    '& .MuiChip-icon': { color: ACCENT },
+                                    '& .MuiChip-label': { whiteSpace: 'normal' },
+                                    '&:hover': { bgcolor: `${ACCENT}22` },
+                                  }}
+                                />
+                              ))}
+                            </Stack>
+                          );
+                        })()}
                     </Fragment>
                   ))}
 
