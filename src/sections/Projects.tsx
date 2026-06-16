@@ -28,8 +28,8 @@ const PROJECTS: Project[] = [
     description:
       'A multi-tenant SaaS for retro game and TCG store owners. The standout technical pieces: Claude Haiku vision auto-identifies games from customer trade-in photos (title, platform, condition) and pre-populates inventory — collapsing the highest-friction workflow into seconds. Tenant isolation enforced via JWT-extracted company_id and a custom [RequirePermission] RBAC attribute checked on every Azure Function. Webhook-driven Stripe billing with a trial-to-paid state machine. Built and operated by the same autonomous multi-agent CI/CD pipeline that runs StayRecap — agents write, review, test, and deploy across four coordinated repos.',
     tech: ['React', 'TypeScript', 'Material UI', '.NET 8', 'Azure Functions', 'PostgreSQL', 'Claude (Vision)', 'Stripe', 'GitHub Actions'],
-    status: 'In Development',
-    statusColor: '#FF8A65',
+    status: 'Live',
+    statusColor: '#66BB6A',
     links: { github: 'https://github.com/retrostoremanager', demo: 'https://www.retrostoremanager.com' },
     featured: true,
     caseStudy: 'retro',
@@ -40,7 +40,7 @@ const PROJECTS: Project[] = [
     description:
       'A multi-tenant SaaS that turns messy short-term-rental data (PMS exports, expense CSVs, guest reviews) into polished, owner-ready quarterly PDF reports in under two minutes — with AI narrative bound to verified numbers so it never hallucinates a figure. The distinctive part: the product is built and operated by an autonomous multi-agent CI/CD pipeline — an orchestrator reads the spec, then dispatches AI agents to write, review, test, and deploy code across four repos, and self-heals production incidents.',
     tech: ['React', 'TypeScript', '.NET 9', 'Azure Functions', 'PostgreSQL', 'EF Core', 'Claude (Anthropic)', 'Stripe', 'GitHub Actions'],
-    status: 'MVP Complete',
+    status: 'Live',
     statusColor: '#66BB6A',
     links: { github: 'https://github.com/strata-reports-ai/orchestrator-strata-reports', demo: 'https://app.stayrecap.com' },
     featured: true,
@@ -245,7 +245,7 @@ export default function Projects() {
                           '&:hover': { bgcolor: 'rgba(0,212,255,0.08)' },
                         }}
                       >
-                        Live Demo
+                        Visit Site
                       </Button>
                     )}
                   </Stack>
