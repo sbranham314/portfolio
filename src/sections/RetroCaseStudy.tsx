@@ -3,6 +3,7 @@ import { Box, Container, Typography, Chip, Button, Stack, IconButton, Divider } 
 import { motion, AnimatePresence } from 'framer-motion';
 import CloseIcon from '@mui/icons-material/Close';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 const ACCENT = '#00D4FF';
 const CARD = '#1A2035';
@@ -120,18 +121,31 @@ export default function RetroCaseStudy({ open, onClose }: { open: boolean; onClo
 
               <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mb: 4 }} />
 
-              <SectionLabel>Source</SectionLabel>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<GitHubIcon fontSize="small" />}
-                href="https://github.com/retrostoremanager"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ borderColor: 'rgba(255,255,255,0.12)', color: 'text.secondary', '&:hover': { borderColor: ACCENT, color: ACCENT } }}
-              >
-                GitHub organization
-              </Button>
+              <SectionLabel>Live site & source</SectionLabel>
+              <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', gap: 1.5 }}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  endIcon={<OpenInNewIcon fontSize="small" />}
+                  href="https://www.retrostoremanager.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ bgcolor: ACCENT, color: '#0A0E1A', fontWeight: 700, boxShadow: 'none', '&:hover': { bgcolor: ACCENT, boxShadow: 'none' } }}
+                >
+                  Visit the live app
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<GitHubIcon fontSize="small" />}
+                  href="https://github.com/retrostoremanager"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ borderColor: 'rgba(255,255,255,0.12)', color: 'text.secondary', '&:hover': { borderColor: ACCENT, color: ACCENT } }}
+                >
+                  GitHub organization
+                </Button>
+              </Stack>
             </Container>
           </motion.div>
         </motion.div>

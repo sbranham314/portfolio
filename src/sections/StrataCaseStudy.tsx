@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CloseIcon from '@mui/icons-material/Close';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import StrataArchitectureDiagram from '../components/StrataArchitectureDiagram';
 
 const ACCENT = '#00D4FF';
@@ -169,6 +170,20 @@ export default function StrataCaseStudy({ open, onClose }: { open: boolean; onCl
               </Box>
 
               <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mb: 4 }} />
+
+              {/* Live site */}
+              <SectionLabel>Live site</SectionLabel>
+              <Button
+                variant="contained"
+                size="small"
+                endIcon={<OpenInNewIcon fontSize="small" />}
+                href="https://app.stayrecap.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ bgcolor: ACCENT, color: '#0A0E1A', fontWeight: 700, boxShadow: 'none', mb: 4, '&:hover': { bgcolor: ACCENT, boxShadow: 'none' } }}
+              >
+                Visit StayRecap
+              </Button>
 
               {/* Repos */}
               <SectionLabel>Source</SectionLabel>
