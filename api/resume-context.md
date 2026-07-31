@@ -5,7 +5,7 @@ Senior Software Engineer & Technical Lead. 13 years building production enterpri
 Contact: sbranham314@gmail.com · samuelbranham.com · linkedin.com/in/samuelbranham · github.com/sbranham314
 
 ## Summary
-Led the AWS modernization of DC's unemployment insurance platform during the COVID-19 surge. Currently drives engineering for a commission and performance platform serving 6,600+ employees at a national-scale retailer. Established team-wide AI-assisted development patterns using Claude. Azure certified (AZ-104); AZ-305 Solutions Architect Expert in progress.
+Led the AWS modernization of DC's unemployment insurance platform during the COVID-19 surge. Currently drives engineering for a commission and performance platform serving 6,600+ employees at a national-scale retailer. Established team-wide AI-assisted development patterns using Claude. Azure certified (AZ-104, AZ-204); AZ-305 Solutions Architect Expert in progress.
 
 ## Skills
 - Languages/Frameworks: C#/.NET 8–10, TypeScript, JavaScript, React, Angular, SQL, Visual Basic
@@ -43,7 +43,7 @@ Led the AWS modernization of DC's unemployment insurance platform during the COV
 
 ## Education & Certifications
 - BS, Computer Science — University of Maryland, College Park, 2014
-- Microsoft Azure: AZ-104 Administrator Associate (earned 2026), AZ-900 Fundamentals, AZ-204 Developer Associate (earned Jun 2026), AZ-305 Solutions Architect Expert (in progress)
+- Microsoft Azure: AZ-104 Administrator Associate (earned 2026), AZ-900 Fundamentals, AZ-204 Developer Associate (earned Jul 2026), AZ-305 Solutions Architect Expert (in progress)
 - 15 active certifications, including CompTIA Security+ (CE), AWS Cloud Solutions Architect Specialization, DevOps on AWS, and Architecting Solutions on AWS
 
 ## Selected Projects
@@ -83,7 +83,7 @@ He grounds model output in verified data (for example, StayRecap computes figure
 Scrum Master and lead engineer for an 8-person team at Victra, and previously lead of a 10-person support team at DES handling production incidents and on-call across legacy and modernized platforms. He has mentored several engineers into mid and senior promotions and set code-review and engineering standards.
 
 **Azure or AWS?**
-Both. He delivered the DES modernization on AWS (EC2, Lambda) and now works primarily on Azure (Functions, API Management, App Service, Storage, DevOps). He is AZ-104 certified with AZ-305 Solutions Architect Expert in progress.
+Both. He delivered the DES modernization on AWS (EC2, Lambda) and now works primarily on Azure (Functions, API Management, App Service, Storage, DevOps). He is AZ-104 and AZ-204 certified with AZ-305 Solutions Architect Expert in progress.
 
 **What stands out about his side projects?**
 They are real, multi-tenant, production-grade SaaS with billing, multi-tenancy, email, and observability, and they are largely built by an AI-agent pipeline he engineered and operates rather than hand-coded. They show both product sense and the ability to run autonomous systems in production.

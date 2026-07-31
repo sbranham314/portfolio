@@ -29,8 +29,8 @@ const AZURE_CERTS: AzureCert[] = [
     name: 'Azure Developer Associate',
     code: 'AZ-204',
     description: 'Designing, building, testing, and maintaining cloud applications and services on Microsoft Azure.',
-    status: 'upcoming',
-    statusLabel: 'Exam · Jun 2026',
+    status: 'earned',
+    statusLabel: 'Earned · Jul 2026',
   },
   {
     name: 'Azure Solutions Architect Expert',
