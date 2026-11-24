@@ -28,7 +28,7 @@ import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
 import { ACCENT } from '../theme';
 
 type Action = {
-  action: 'scroll_to_section' | 'open_case_study' | 'open_contact_form' | 'download_resume';
+  action: 'scroll_to_section' | 'open_contact_form' | 'download_resume';
   target?: string;
   label: string;
 };
@@ -66,7 +66,6 @@ const OPENERS: Record<string, { greeting: string; suggestions: string[] }> = {
     suggestions: [
       'How does the autonomous build pipeline work?',
       'Tell me about RetroStoreManager.',
-      'What is StayRecap and how is it built?',
       'What is he building with AI?',
     ],
   },
@@ -378,8 +377,6 @@ export default function AskAI() {
     const run = () => {
       if (a.action === 'scroll_to_section' && a.target) {
         document.getElementById(a.target)?.scrollIntoView({ behavior: 'smooth' });
-      } else if (a.action === 'open_case_study') {
-        window.dispatchEvent(new CustomEvent('open-case-study', { detail: a.target }));
       }
     };
     if (isMobile) {

@@ -4,21 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>What I Learned Building Software with Autonomous AI Agents | Samuel Branham</title>
-  <meta name="description" content="Notes from building two SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code. What works, what doesn't, and what it changes about the job." />
+  <meta name="description" content="Notes from building SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code. What works, what doesn't, and what it changes about the job." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://samuelbranham.com/writing/building-software-with-ai-agents.html" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   <meta property="og:type" content="article" />
   <meta property="og:title" content="What I Learned Building Software with Autonomous AI Agents" />
-  <meta property="og:description" content="Notes from building two SaaS products almost entirely through a pipeline of AI agents. What works, what doesn't, and what it changes about the job." />
+  <meta property="og:description" content="Notes from building SaaS products almost entirely through a pipeline of AI agents. What works, what doesn't, and what it changes about the job." />
   <meta property="og:url" content="https://samuelbranham.com/writing/building-software-with-ai-agents.html" />
   <meta property="og:image" content="https://samuelbranham.com/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="What I Learned Building Software with Autonomous AI Agents" />
-  <meta name="twitter:description" content="Notes from building two SaaS products almost entirely through a pipeline of AI agents." />
+  <meta name="twitter:description" content="Notes from building SaaS products almost entirely through a pipeline of AI agents." />
   <meta name="twitter:image" content="https://samuelbranham.com/og-image.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,7 +36,7 @@
     "publisher": { "@type": "Person", "name": "Samuel Branham" },
     "url": "https://samuelbranham.com/writing/building-software-with-ai-agents.html",
     "mainEntityOfPage": "https://samuelbranham.com/writing/building-software-with-ai-agents.html",
-    "description": "Notes from building two SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code."
+    "description": "Notes from building SaaS products almost entirely through a pipeline of AI agents that write, review, test, and deploy code."
   }
   </script>
 
@@ -89,7 +89,7 @@
 
       <p class="lead">A few months ago I caught myself reviewing a pull request at midnight that I hadn't asked anyone to write. An agent had noticed a failing integration test in one of my projects, traced it to a bad assumption in a serializer, fixed it, and opened the PR with a description that was honestly better than most I get from people. I approved it and went to bed.</p>
 
-      <p>That's roughly where I've landed after spending the better part of a year building two SaaS products, StayRecap and RetroStoreManager, almost entirely through a pipeline of AI agents.</p>
+      <p>That's roughly where I've landed after spending the better part of a year building SaaS products, including RetroStoreManager, almost entirely through a pipeline of AI agents.</p>
 
       <p>I don't mean "AI-assisted" in the tab-complete sense. I mean a pipeline that reads a spec, works out what needs to change, and hands the work to agents that write the code, review each other, run the tests, and ship it across four separate repositories per product. When something breaks in production, it takes a swing at fixing itself before I'm awake.</p>
 
@@ -104,7 +104,7 @@
       <p>So the spec became the product. I spend more time than I used to writing down what "done" looks like: the constraints, the edge cases, the things that must never happen. That document is now the highest-leverage thing I touch all day. Vague in, polished-wrong out.</p>
 
       <h2>The hard line: the AI never does the math</h2>
-      <p>StayRecap generates financial reports, and property owners make real decisions off them. A made-up number there isn't a bug, it's a liability. So the whole thing is built so the model literally cannot invent a figure. A deterministic layer computes and verifies every number first; the language model only gets to describe numbers that already exist. It writes the sentence. It never does the arithmetic.</p>
+      <p>One of the products I built generated financial reports, and property owners made real decisions off them. A made-up number there isn't a bug, it's a liability. So the whole thing was built so the model literally could not invent a figure. A deterministic layer computed and verified every number first; the language model only got to describe numbers that already existed. It wrote the sentence. It never did the arithmetic.</p>
       <p>That split is the most useful design rule I've taken from any of this: let the model handle language, and never let it handle truth. It isn't specific to reports. Anywhere correctness matters, the move is the same: pin the model to verified ground and let it be fluent on top of that, never underneath it.</p>
 
       <h2>Where this leaves me</h2>
