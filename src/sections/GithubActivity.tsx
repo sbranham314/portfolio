@@ -18,7 +18,7 @@ import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 
 // Personal account + the project orgs to surface (their public repos are merged in).
 const USER = 'sbranham314';
-const ORGS = ['retrostoremanager', 'strata-reports-ai'];
+const ORGS = ['retrostoremanager'];
 
 type Profile = {
   name?: string;

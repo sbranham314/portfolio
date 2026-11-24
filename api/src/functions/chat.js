@@ -47,24 +47,24 @@ const NAV_SECTIONS = new Set(['projects', 'experience', 'skills', 'certification
 const NAV_TOOL = {
   name: 'navigate_site',
   description:
-    'Offer the visitor a single button to jump to a relevant part of this portfolio site. Use it only when seeing a specific section or the StayRecap case study would genuinely help, and always answer in text as well.',
+    'Offer the visitor a single button to jump to a relevant part of this portfolio site. Use it only when seeing a specific section of the site would genuinely help, and always answer in text as well.',
   input_schema: {
     type: 'object',
     properties: {
       action: {
         type: 'string',
-        enum: ['scroll_to_section', 'open_case_study', 'open_contact_form', 'download_resume'],
+        enum: ['scroll_to_section', 'open_contact_form', 'download_resume'],
         description:
-          'scroll_to_section jumps to a page section; open_case_study opens the StayRecap case-study modal; open_contact_form opens a form to message Samuel; download_resume opens his résumé PDF.',
+          'scroll_to_section jumps to a page section; open_contact_form opens a form to message Samuel; download_resume opens his résumé PDF.',
       },
       target: {
         type: 'string',
         description:
-          'For scroll_to_section: one of projects, experience, skills, certifications, writing, about, contact, github. For open_case_study: stayrecap. Omit for open_contact_form.',
+          'For scroll_to_section: one of projects, experience, skills, certifications, writing, about, contact, github. Omit for open_contact_form.',
       },
       label: {
         type: 'string',
-        description: 'Short button text, e.g. "Open the StayRecap case study" or "See his certifications".',
+        description: 'Short button text, e.g. "See his projects" or "See his certifications".',
       },
     },
     required: ['action', 'label'],
@@ -86,8 +86,6 @@ function extractActions(content) {
       actions.push({ action: 'download_resume', label });
     } else if (a.action === 'scroll_to_section' && NAV_SECTIONS.has(a.target)) {
       actions.push({ action: 'scroll_to_section', target: a.target, label });
-    } else if (a.action === 'open_case_study' && a.target === 'stayrecap') {
-      actions.push({ action: 'open_case_study', target: 'stayrecap', label });
     }
     if (actions.length >= 1) break;
   }

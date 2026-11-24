@@ -23,7 +23,7 @@ const HIGHLIGHTS: { t: string; d: string }[] = [
   },
   {
     t: 'Built and operated by agents',
-    d: 'RetroStoreManager is produced by the same autonomous multi-agent pipeline as StayRecap: an orchestrator reads the spec and dispatches AI agents to write, review, test, and deploy across four coordinated repositories.',
+    d: 'RetroStoreManager is produced by an autonomous multi-agent pipeline: an orchestrator reads the spec and dispatches AI agents to write, review, test, and deploy across four coordinated repositories.',
   },
 ];
 
@@ -77,8 +77,8 @@ export default function RetroCaseStudy({ open, onClose }: { open: boolean; onClo
                 RetroStoreManager
               </Typography>
               <Typography variant="h6" component="p" sx={{ color: 'text.secondary', fontWeight: 400, lineHeight: 1.7, mb: 5 }}>
-                A multi-tenant SaaS for retro game and trading-card-game store owners, built and operated by the same
-                autonomous agent pipeline as StayRecap.
+                A multi-tenant SaaS for retro game and trading-card-game store owners, built and operated by an
+                autonomous agent pipeline.
               </Typography>
 
               <SectionLabel>The product</SectionLabel>
